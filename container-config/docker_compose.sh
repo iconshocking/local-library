@@ -17,6 +17,9 @@ poetry export --without-hashes | awk '{ print $1 }' FS=';' >requirements.txt &&
 # pip freeze > requirements.txt && sed -i '' "s%.* @ file://$PWD%.%g" requirements.txt
 cd container-config
 
+# make sure all scss files are compiled
+pnpm css-gen
+
 if [ "$1" = "dev" ]; then
   docker compose \
     --env-file ./secrets/.dev.env \
