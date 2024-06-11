@@ -1,0 +1,13 @@
+FROM redis:7.2.4
+RUN mkdir -p /usr/local/etc/redis/
+RUN touch /usr/local/etc/redis/redis.conf
+ARG DJANGO_REDIS_USERNAME
+ARG DJANGO_REDIS_PASSWORD
+RUN echo "protected-mode yes \n \
+  user $DJANGO_REDIS_USERNAME on allcommands allkeys >$DJANGO_REDIS_PASSWORD \n \
+  user default off" > /usr/local/etc/redis/redis.conf
+# EXPOSE doesn't do anthing other than documentation so that using 'docker run -P' or 'docker
+# compose -ps' interacts with all exposed ports for each container
+ARG REDIS_PORT
+EXPOSE ${REDIS_PORT}
+CMD [ "redis-server", "/usr/local/etc/redis/redis.conf" ]

@@ -1,0 +1,20 @@
+{% extends "core/base.html" %}
+{% block content %}
+  <h1>Delete Book: {{ book }}</h1>
+  {% if book.bookinstance_set.all %}
+    <p>You can't delete this book until all their book copies have been deleted:</p>
+    <ul>
+      {% for instance in book.bookinstance_set.all %}
+        <li>
+          <a href="./">{{ instance }} BUT NOT IMPLEMENTED YET</a>
+        </li>
+      {% endfor %}
+    </ul>
+  {% else %}
+    <p>Are you sure you want to delete the book?</p>
+    <form action="" method="post">
+      {% csrf_token %}
+      <button>Yes, delete</button>
+    </form>
+  {% endif %}
+{% endblock content %}

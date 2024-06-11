@@ -1,0 +1,164 @@
+# shouldn't need to increase max connections supported anymore for production because linux kernel was updated in 2019 to
+# default to 4096 (no longer need 'net.core.somaxconn = 4096')
+
+# 'auto' sets value to number of cores (default value is 1)
+worker_processes auto;
+# default for the docker image
+user nginx nginx;
+# proess ID of the master process, which can be passed signals
+pid /var/run/nginx.pid;
+
+error_log /log/error.log warn;
+
+events {
+  # Default: 1024
+  worker_connections 4096;
+  # 'accept_mutex' defaults to off, so all processes will wake up to accept connections, so this
+  # creates wasted resources at low traffic times (thundering herd problem)
+}
+
+
+# no caching configured for this config
+http {
+  log_format real_ip_with_request_id
+    '{'
+    '"request_id":"$request_id",'
+    '"time_iso8601":"$time_iso8601",'
+    '"htto_x_forwarded_for":"$http_x_forwarded_for",'
+    '"remote_addr":"$remote_addr",'
+    '"remote_user":"$remote_user",'
+    '"http_host":"$http_host",'
+    '"request":"$request",'
+    '"status":"$status",'
+    '"body_bytes_sent":"$body_bytes_sent",'
+    '"request_time":"$request_time",'
+    '"request_length":"$request_length",'
+    '"http_referrer":"$http_referer",'
+    '"http_user_agent":"$http_user_agent",'
+    '"request_completion":"$request_completion",'
+    '"upstream_bytes_received":"$upstream_bytes_received",'
+    '"upstream_connect_time":"$upstream_connect_time",'
+    '"upstream_response_length":"$upstream_response_length",'
+    '"upstream_response_time":"$upstream_response_time"'
+    '}';
+  # since this is behind a proxy, we want to log the real address of the client in "X-Forwarded-For" header
+  access_log /log/access.log real_ip_with_request_id;
+
+  # 'include' imports settings from another file (this is a default that ships with nginx)
+  include mime.types;
+  default_type application/octet-stream;
+
+  # fly.io supports http2 ('proxy_pass' does not and converts to HTTP/1.1, but this has less
+  # performance overhead on the back channel side since the multiplexing of responses is mostly
+  # beneficial just for the client making requests in parallel)
+  # - disabling for now in fly_nginx.toml because the debugging is giving me a headache
+
+  # can support HTTP/2 server push too, which allows pushing additional resources when another resource is requested
+
+  # define the upstream server group
+  # (non-HTTP servers can be proxied to but require different directives like 'uwsgi_pass', etc.)
+  upstream django {
+    # domain / ip address and port of the upstream server
+    server ${DJANGO_IP}:${DJANGO_PORT};
+
+    # could define multiple server to support load balancing
+    # options:
+    # - weight=[number]: weights servers according to how many requests they should receive
+    # - backup: only use this server if the others are fully saturated
+
+    # load balancing options:
+    # - default: Round Robin even request distribution
+    # - 'least_conn': server with least connections
+    # - 'ip_hash:'' maps same IP to same server (to assist with sessions, caching, etc.)
+    #   - 'server [address] down': preserve server hashes even if one server is taken out of rotation
+    #     (to avoid IPs getting new mappings, except for those on the down server)
+    # - 'hash' [args]: like 'ip_hash' but with your own defined keys
+
+    # Using something like HAProxy in front of nginx might be better for sticky sessions
+    # that don't have the balancing problems of hashing balancing
+  }
+
+  # each 'server' is a virtual server that covers IPS and/or domains
+  server {
+    # 'default_server' designates which virtual server for a specific port should be used if no server_name is matched
+    # (default is the first in the file for that port)
+
+    # define no 'server_name', so if no host match (crawler or something hitting the server via raw
+    # IP or wrong host), close the connection
+    listen ${NGINX_LISTEN_PORT} default_server;
+    return 444;
+  }
+
+  server {
+    server_name static.playground.fly-io.cshock.tech;
+    listen ${NGINX_LISTEN_PORT};
+    include /etc/nginx/conf.d/statics.conf;
+  }
+
+  # redirect www to non-www
+  server {
+    server_name www.playground.fly-io.cshock.tech;
+    listen ${NGINX_LISTEN_PORT};
+    return 301 https://playground.fly-io.cshock.tech$request_uri;
+  }
+
+
+  server {
+    # HTTPS redirect on prod handled by fly.io
+    listen ${NGINX_LISTEN_PORT} backlog=4096;
+    # defines the required options for HOST header on request (can use wildcard * and multiple space separated domains
+    server_name playground.fly-io.cshock.tech
+      cshock-library-nginx.fly.dev
+      127.0.0.1;
+
+    # - 'location @[name]' allows for referencing via name by other directives (instead of URL)
+    # - possible to nest location directives
+    # - use 'location ~ [regex]' syntax if not using simple prefix matching (use '~*' for case-insensitive)
+
+    # statics
+    location /statics/ {
+      include /etc/nginx/conf.d/statics.conf;
+    }
+
+    include /etc/nginx/conf.d/user-media.conf;
+
+    # '=' for exact matches avoids needing to check other locations and speeds up matching
+    location / {
+      # do NOT set 'gzip_proxied' for these proxied HTML responses because that makes them vulnerable to BREACH
+
+      # by default, 'proxy_pass' sets Host header to $proxy_host, 'Connection' header to 'close', and clears empty headers
+      proxy_pass http://django;
+      # Django doesn't need to know it's being proxied, and it makes it easier to set allowable hosts
+      proxy_set_header Host $host;
+      proxy_pass_request_headers on;
+
+      # django CSRF token masking mititgates BREACH attacks, so we can enable compression on HTML responses
+      gzip on;
+      # requires 'Content-Length' response header to be set
+      gzip_min_length 1000;
+      # must set this when receiving a proxied request (disable if proxy is a CDN that wants un-compressed files for caching)
+      gzip_proxied any;
+
+      # don't cache and set private for extra clarity
+      add_header Cache-Control "no-transform, no-store, private";
+
+      # 'X-Forwarded-Proto' is already provided by fly.io, so no need to set it
+      proxy_set_header X-Real-IP $http_fly_client_id;
+      proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+      proxy_set_header X-Forwarded-Host $http_host;
+      proxy_set_header X-Request-Id $request_id;
+
+      # replaces the 'Location' header in a proxied server's redirect response to remove the internal network part of the URL
+      # ('default' strips 'proxy_pass' value + 'location' value; e.g., '127.0.0.1:8000/index/' becomes 'index/',
+      # which is fine because Location header supports relative URLs.)
+      proxy_redirect default;
+      client_max_body_size 4M;
+
+      # 'proxy_buffers' defines the number and size of buffers to use for receiving the proxied response (can also just use defaults)
+      # 'proxy_buffer_size' defines the buffer size for the first parts of the response, which can be smaller since it is usually just a header
+
+      # 'proxy_bind' allows for setting the source IP address for connecting to the proxied server
+      # (e.g. 'proxy_bind 127.0.0.2' for a different proxy)
+    }
+  }
+}

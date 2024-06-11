@@ -1,0 +1,13 @@
+{% extends "core/base.html" %}
+{% block title %}
+  Session Playground
+{% endblock title %}
+{% block content %}
+  {% comment %} 'pluralize' filter also supports args with the syntax
+  '"[optional_singluar_suffix],[optional_plural_suffix]"' {% endcomment %}
+  <h2>You have visited the page {{ num_visits }} time{{ num_visits | pluralize }}</h2>
+  <button class="reset-session">Reset my session data</button>
+  {% load static %}
+  <script src="{% static "catalog/js/session_playground.js" %}"></script>
+{% endblock content %}
+{% load static %}

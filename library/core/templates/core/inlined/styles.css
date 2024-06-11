@@ -1,0 +1,5 @@
+{% load static %}
+.full-container {
+  background: no-repeat top right url("{% static 'core/images/django-logo-negative.png' %}");
+  background-size: 100px;
+}

@@ -1,0 +1,50 @@
+[tool.poetry]
+name = "local-library"
+version = "1.0.0"
+description = ""
+authors = ["Conrad Shock <shockconrad@gmail.com>"]
+package-mode = false
+
+# when building poetry project for requirements.txt, must use the poetry-plugin-export (install via
+# `pipx inject poetry poetry-plugin-export`) and run the following:
+#
+#  > poetry export --without-hashes | awk '{ print $1 }' FS=';' > requirements.txt && sed -i ''
+#    "s%.* @ file://$PWD%.%g" requirements.txt
+#
+# - NOTE: 'awk' removes python version number by splitting lines on ';' and taking the first column
+# - NOTE: 'sed' call replaces local packages syntax 'package_name @ file://absolute_path' with
+#   'relative_path'
+# - NOTE: option '--without-hashes' to exclude hash values
+#
+# alternatively, can use 'pip freeze > requirements.txt if in the venv shell'
+
+# Dependencies in this format of requirements.txt can be added by poetry via `poetry add $(cat requirements.txt)`
+[tool.poetry.dependencies]
+python = "^3.12"
+django = "^5.0.3"
+djlint = "^1.34.1"
+docutils = "^0.20.1"
+django-debug-toolbar = "^4.3.0"
+coverage = "^7.4.4"
+build = "^1.2.1"
+redis = "^5.0.4"
+hiredis = "^2.3.2"
+psycopg = { extras = ["binary"], version = "^3.1.18" }
+gunicorn = "^22.0.0"
+dj-database-url = "^2.1.0"
+pillow = "^10.3.0"
+django-storages = {extras = ["s3"], version = "^1.14.3"}
+whitenoise = "^6.6.0"
+django-cleanup = "^8.1.0"
+django-crispy-forms = "^2.1"
+django-prometheus = "^2.3.1"
+crispy-bootstrap5 = "^2024.2"
+django-cors-headers = "^4.3.1"
+django-auto-prefetch = "^1.8.0"
+django-browser-reload = "^1.12.1"
+django-extensions = "^3.2.3"
+django-allauth = "^0.63.3"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"

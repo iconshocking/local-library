@@ -1,0 +1,97 @@
+{% comment %} This is the base template that others should extend from. {% endcomment %}
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title>
+      {% block title %}
+        Local Library
+      {% endblock title %}
+    </title>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="description" content="Local Library">
+    {% comment %} meta keywords are outdated and do not contribute to SEO anymore {% endcomment %}
+    <meta name="keywords" content="">
+    {% comment %} favicon {% endcomment %}
+    {% load static %}
+    <link rel="icon" type="image/jpeg" href="{% static "core/images/favicon.jpg" %}">
+    {% comment %} Bootstrap CSS for crispy forms and CSS classes in the template {% endcomment %}
+    <link href="{% static 'core/css/bootstrap.min.css' %}" rel="stylesheet">
+    {% comment %} Add additional CSS in static file {% endcomment %}
+    <link rel="stylesheet" href="{% static 'core/css/gen/styles.css' %}" />
+    <style>
+      {% comment %} inline to have access to static template tag {% endcomment %}
+      {% include "core/inlined/styles.css" %}
+    </style>
+    {% block head_extra %}
+    {% endblock head_extra %}
+  </head>
+  <body>
+    <div class="container-fluid full-container">
+      <div class="row">
+        <div class="col-sm-2">
+          {% block sidebar %}
+            <ul class="sidebar-nav">
+              <li>
+                <a href="{% url 'catalog:index' %}">Home</a>
+              </li>
+              <li>
+                <a href="{% url 'catalog:books' %}">All books</a>
+              </li>
+              <li>
+                <a href="{% url "catalog:authors" %}">All authors</a>
+              </li>
+              <li>
+                <a href="{% url "catalog:session_playground" %}">Session playground</a>
+              </li>
+              {% if user.is_authenticated %}
+                <li>User: {{ user.get_username }}</li>
+                {% if perms.catalog.can_mark_returned %}
+                  <li>
+                    <a href="{% url 'catalog:all_borrowed' %}">All Borrowed</a>
+                  </li>
+                {% endif %}
+                <li>
+                  <a href="{% url 'catalog:my_borrowed' %}">My Borrowed</a>
+                </li>
+                <li>
+                  <form id="logout-form" method="post" action="{% url 'account_logout' %}">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-link">Logout</button>
+                  </form>
+                </li>
+              {% else %}
+                <li>
+                  {% comment %} providing 'next' parameter is the default way of setting/retrieving
+                  a redirect URL when using RedirectURLMixin {% endcomment %}
+                  <a href="{% url 'account_login' %}?next={{ request.path }}">Login</a>
+                </li>
+              {% endif %}
+            </ul>
+          {% endblock sidebar %}
+        </div>
+        <div class="col-sm-10 ">
+          {% block content %}
+          {% endblock content %}
+          {% block pagination %}
+            {% if is_paginated %}
+              <div class="pagination">
+                <span class="page-links">
+                  {% comment %} 'page_obj' is the page pagination object, and 'paginator' is the
+                  paginator object {% endcomment %}
+                  {% if page_obj.has_previous %}
+                    <a href="{{ request.path }}?page={{ page_obj.previous_page_number }}">previous</a>
+                  {% endif %}
+                  <span class="page-current">Page {{ page_obj.number }} of {{ paginator.num_pages }}.</span>
+                  {% if page_obj.has_next %}<a href="{{ request.path }}?page={{ page_obj.next_page_number }}">next</a>{% endif %}
+                </span>
+              </div>
+            {% endif %}
+          {% endblock pagination %}
+        </div>
+      </div>
+      {% block extra_body %}
+      {% endblock extra_body %}
+    </div>
+  </body>
+</html>

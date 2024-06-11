@@ -1,0 +1,33 @@
+# merge with prod compose file
+
+services:
+  django:
+    env_file:
+      - ./git-safe/.preprod.safe.env
+
+  nginx:
+    build:
+      target: preprod
+    env_file:
+      - ./git-safe/.preprod.safe.env
+    develop:
+      watch:
+        - path: ./statics
+          target: /statics
+          action: sync
+
+  prometheus:
+    container_name: prometheus
+    build:
+      context: ../prometheus
+      dockerfile: ../container-config/Dockerfile_prometheus
+      args:
+        - GRAFANA_CLOUD_USERNAME=$GRAFANA_CLOUD_USERNAME
+        - GRAFANA_CLOUD_PASSWORD=$GRAFANA_CLOUD_PASSWORD
+        - DJANGO_PORT=$DJANGO_PORT
+      target: final
+    env_file:
+      - ./git-safe/.preprod.safe.env
+      - ./secrets/.preprod.env
+    ports:
+      - 9090:9090

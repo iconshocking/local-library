@@ -1,0 +1,54 @@
+{% extends "core/base.html" %}
+{% block title %}
+  Local Library Books
+{% endblock title %}
+{% block head_extra %}
+  {% load static %}
+  <link rel="stylesheet" href="{% static "catalog/css/gen/book_list.css" %}">
+{% endblock head_extra %}
+{% block content %}
+  <h1>Book List</h1>
+  {% if book_list %}
+    <ul>
+      {% for book in book_list %}
+        <li>
+          <a href="{{ book.get_absolute_url }}">{{ book.title }}</a>
+          ({{ book.author }})
+          {% comment %} additinal variable created by the 'for' tag  {% endcomment %}
+          {% if forloop.last %}
+            {% if not page_obj or not page_obj.has_next %}<small>Last book in the list.</small>{% endif %}
+          {% endif %}
+          {% if perms.catalog.change_book %}
+            <a href="{% url "catalog:book_update" book.pk %}">
+              <button>Update</button>
+            </a>
+          {% endif %}
+          {% if perms.catalog.delete_book %}
+            <a href="{% url "catalog:book_delete" book.pk %}">
+              <button>Delete</button>
+            </a>
+          {% endif %}
+          {% if book.cover_image and book.cover_image.url %}
+            <div class="cover-image">
+              <img src="{{ book.cover_image.url }}"
+                   alt="cover_image"
+                   height="{{ book.cover_image_height }}"
+                   width="{{ book.cover_image_width }}">
+            </div>
+          {% endif %}
+        </li>
+      {% endfor %}
+    </ul>
+    <p>{{ view.context_object_name }}</p>
+    <p>{{ viewfunction }}</p>
+    {% comment %} Note static functions cannot be run. Only variables in the context data and
+    attributes on those variables can be accessed. {% endcomment %}
+  {% else %}
+    <p>There are no books in the library.</p>
+  {% endif %}
+  {% if perms.catalog.add_book %}
+    <a href="{% url "catalog:book_create" %}">
+      <button>Create</button>
+    </a>
+  {% endif %}
+{% endblock content %}

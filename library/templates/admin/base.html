@@ -1,0 +1,14 @@
+{% extends "admin/base.html" %}
+{% block extrastyle %}
+  {{ block.super }}
+  <style>
+    {% comment %} set html[data-theme="light/dark"] to target light/dark specific theming {% endcomment %}
+    :root {
+  {% comment %} custom CSS {% endcomment %}
+}
+  </style>
+{% endblock extrastyle %}
+{% block extrahead %}
+  {% load static %}
+  <link rel="icon" type="image/jpeg" href="{% static "core/images/favicon.jpg" %}">
+{% endblock extrahead %}

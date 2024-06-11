@@ -1,0 +1,23 @@
+# fly.toml app configuration file generated for container-config on 2024-05-17T18:26:49-07:00
+#
+# See https://fly.io/docs/reference/configuration/ for information about how to use this file.
+#
+
+app = 'cshock-library-django'
+primary_region = 'sjc'
+swap_size_mb = 512
+
+[build]
+image = "registry.fly.io/cshock-library-django:latest"
+
+[deploy]
+# 'release_command' is an initial command to run before the container runs its image's normal start
+# command
+
+[[vm]]
+memory = '256mb'
+cpu_kind = 'shared'
+cpus = 1
+
+[env]
+# this gets populated by the fly.sh script

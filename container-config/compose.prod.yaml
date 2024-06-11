@@ -1,0 +1,26 @@
+services:
+  django:
+    expose:
+      - $DJANGO_PORT
+    env_file:
+      - ./secrets/.prod.env
+      - ./git-safe/.prod.safe.env
+
+  nginx:
+    container_name: nginx
+    build:
+      context: ../nginx
+      # relative to the context
+      dockerfile: ../container-config/Dockerfile_nginx
+      target: prod
+    # share statics & user media with django volume for convenience for development
+    volumes:
+      - user-media:/user-media
+    ports:
+      - 80:80
+    env_file:
+      - ./secrets/.prod.env
+      - ./git-safe/.dev.safe.env
+      - ./git-safe/.prod.safe.env
+    depends_on:
+      - django

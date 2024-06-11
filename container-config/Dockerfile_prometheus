@@ -1,0 +1,12 @@
+FROM debian:12.5-slim as base
+RUN apt-get update && apt-get install -y gettext-base
+ADD prometheus.yaml /prometheus.yaml
+ARG GRAFANA_CLOUD_USERNAME
+ARG GRAFANA_CLOUD_PASSWORD
+ARG DJANGO_PORT
+RUN envsubst < /prometheus.yaml > /prometheus_with_env.yaml
+
+FROM prom/prometheus:v2.52.0 as final
+# image expects .yml file
+COPY --from=base /prometheus_with_env.yaml /etc/prometheus/prometheus.yml
+EXPOSE 9090

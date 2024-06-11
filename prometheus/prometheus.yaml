@@ -1,0 +1,18 @@
+global:
+  scrape_interval: "60s"
+  scrape_timeout: "10s"
+
+scrape_configs:
+  - job_name: "library-django"
+    metrics_path: /metrics
+    scheme: http
+    static_configs:
+      - targets:
+          - "django:$DJANGO_PORT"
+
+# write to Grafana Cloud
+remote_write:
+- url: https://prometheus-prod-36-prod-us-west-0.grafana.net/api/prom/push
+  basic_auth:
+    username: $GRAFANA_CLOUD_USERNAME
+    password: $GRAFANA_CLOUD_PASSWORD

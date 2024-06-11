@@ -1,0 +1,93 @@
+# Comments are provided throughout this file to help you get started.
+# If you need more help, visit the Docker Compose reference guide at
+# https://docs.docker.com/go/compose-spec-reference/
+
+# Here the instructions define your application as a service called "server".
+# This service is built from the Dockerfile in the current directory.
+# You can add other services your application may depend on here, such as a
+# database or a cache. For examples, see the Awesome Compose repository:
+# https://github.com/docker/awesome-compose
+
+name: "library"
+services:
+  django:
+    container_name: django
+    build:
+      context: ..
+      dockerfile: ./container-config/Dockerfile_django
+      target: base
+      args:
+        - DJANGO_PORT=$DJANGO_PORT
+    develop:
+      watch:
+        - path: ../library
+          target: ./app/library
+          ignore:
+            - "*.log"
+          action: sync
+        - path: ./requirements.txt
+          action: rebuild
+    # can define values as array (with '-' and '=') or key-value pairs
+    environment:
+      # host names for each container in the network are defined by the name of the container
+      REDIS_HOST: "redis"
+      REDIS_PORT: "6379"
+      POSTGRES_PASSWORD: $POSTGRES_PASSWORD
+    env_file:
+      - ./git-safe/.dev.safe.env
+      - ./secrets/.dev.env
+    volumes:
+      - user-media:/app/library/user-media
+    # tells Docker Compose to start the database before your application
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_started
+
+  redis:
+    container_name: redis
+    build:
+      context: ..
+      dockerfile: ./container-config/Dockerfile_redis
+      args:
+        DJANGO_REDIS_USERNAME: $DJANGO_REDIS_USERNAME
+        DJANGO_REDIS_PASSWORD: $DJANGO_REDIS_PASSWORD
+        REDIS_PORT: 6379
+    # only need to map host port if want to access the redis server remotely (from the internet or
+    # outside the docker network)
+    ports:
+      - 127.0.0.1:6379:6379 # initial IP to restrict exposure to only the host
+
+  postgres:
+    container_name: postgres
+    # NOTE: if there is a build context, 'image' instead defines the name of the image built from
+    # your Dockerfile. Therefore, don't set 'image' to the same as the base image name referred to
+    # in your FROM instruaction; otherwise, each time the image is rebuilt, the FROM instruction
+    # will refer to the local built image, NOT the remote image, and your build will layer on top of
+    # itself each time until you get a "max depth exceeded" error
+    image: postgres:16.3
+    restart: always
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    env_file:
+      - ./git-safe/.dev.safe.env
+      - ./secrets/.dev.env
+    environment:
+      POSTGRES_PASSWORD: $POSTGRES_PASSWORD
+    ports:
+      # if you only define the container port, a random ephemeral port will be mapped from the host
+      - 127.0.0.1:5432:5432
+    healthcheck:
+      # array syntax required when using CMD and preferred to avoid shell handling of signals
+      #
+      # -U option value is the name of the postgres user, but the server returns exit code 0 even if
+      # mismatched options; just an error is logged
+      test: ["CMD", "pg_isready", "-U", "postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  postgres-data:
+  user-media:

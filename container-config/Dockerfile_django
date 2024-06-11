@@ -1,0 +1,100 @@
+# syntax=docker/dockerfile:1
+
+# ARG is the only instruction that can precede FROM, but it must come before all FROM instructions
+ARG PYTHON_VERSION=3.12.2
+
+# FROM defines the base image. Multiple FROMs can be used to create multiple stages, but only the
+# FINAL stage's image is saved, so copy over anything from previous stages that is needed in the
+# final image. Use 'as' to name the stage since otherwise Docker will just use increasing indices.
+FROM bash:5.2.26 as hello
+RUN echo "Hello, World!" > example.txt
+
+
+
+# Can use 'target' option to only build up to a certain stage (`docker build --target=hello-next
+# .`), which is very useful for defining a base stage followed by split development and production
+# stages.
+#
+# Note: legacy Docker engine would process all stages in order until the target is reached, but
+# BuildKit only processes the target stage and its dependency stages.
+FROM hello as hello-next
+# copies the file from the hello stage to the current stage
+# - (NOTE: can even be used to copy from remote images not already in the build context)
+COPY --from=hello /example.txt /example.txt
+RUN echo "The next world is upon you!" >> example.txt
+
+
+# Use the official Python image as the base image. The slim variant is used to reduce the image
+FROM python:${PYTHON_VERSION}-slim as base
+COPY --from=hello-next /example.txt /example.txt
+
+# generated locally via script beforehand
+COPY requirements.txt ./
+# Install dependencies as a separate step to take advantage of Docker's caching.
+# Leverage a cache mount to /root/.cache/pip to speed up subsequent builds.
+RUN --mount=type=cache,target=/root/.cache/pip \
+    python -m pip install -r requirements.txt
+# use the line below if generating wheels in a builder image step (I'm not because it made the final
+# image bigger somehow)
+#
+# python -m pip wheel --no-cache-dir --wheel-dir /usr/src/app/wheels -r requirements.txt
+
+# if using wheel-builder image:
+# FROM python:${PYTHON_VERSION}-slim as base
+
+# Prevents Python from writing pyc files.
+ENV PYTHONDONTWRITEBYTECODE=1
+# Keeps Python from buffering stdout and stderr to avoid situations where
+# the application crashes without emitting any logs due to buffering.
+ENV PYTHONUNBUFFERED=1
+
+WORKDIR /app
+
+# Create a non-privileged user that the app will run under.
+# See https://docs.docker.com/go/dockerfile-user-best-practices/
+RUN adduser \
+    --disabled-password \
+    --gecos "" \
+    --home "/nonexistent" \
+    --shell "/sbin/nologin" \
+    --no-create-home \
+    --uid 10001 \
+    appuser
+
+# deps install if using wheel-builder pattern
+#
+# COPY --from=builder /usr/src/app/wheels ./wheels
+# COPY --from=builder /requirements.txt ./
+# RUN pip install --no-cache ./wheels/*
+# RUN rm -rf ./wheels
+
+# copy AFTER installing dependencies to take advantage of Docker's caching (the cache mount avoids
+# needing to redownload dependencies, but it still needs to re-install the dependencies)
+COPY ./library ./library
+RUN mkdir -p /app/library/log
+RUN touch /app/library/log/django-errors.log && touch /app/library/log/gunicorn-error.log && touch /app/library/log/gunicorn-access.log
+# allows for writing to the django and gunicorn logging files
+RUN chown appuser -R /app/library/
+# writing to store user-uploaded media
+RUN mkdir -p /user-media
+RUN chown appuser -R /user-media/
+# copy mapping of static files to their hashed names
+COPY ./nginx/statics/staticfiles.json /app/nginx/statics/staticfiles.json
+
+# Switch to the non-privileged user to run the application.
+USER appuser
+
+ARG DJANGO_PORT
+EXPOSE ${DJANGO_PORT}
+
+WORKDIR /app/library
+# can't run migrations here since this is the image, not the container, so no DB is available
+
+# Run the application
+# - (NOTE: can only have one CMD instruction in a Dockerfile)
+# - (NOTE: CMD is the only instruction that runs when a container is started from an existing
+#   container, so it should usually be idempotent and not require any user input)
+
+# ideally would like to bind only to requests from the host IP, but 'fly-local-6pn' seems to be
+# inconsistent across runtimes and doesn't seem to work here
+CMD python manage.py migrate --noinput && gunicorn library.wsgi -b [::]:${DJANGO_PORT}

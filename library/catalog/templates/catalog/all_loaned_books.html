@@ -1,0 +1,30 @@
+{% extends "core/base.html" %}
+{% block content %}
+  <h1>Borrowed books</h1>
+  {% if show_search %}
+    <form action="{% url "catalog:all_borrowed" %}"
+          method="get"
+          autocomplete="off">
+      <label for="search">Search:</label>
+      <input type="search" name="search" placeholder="filter by title">
+      <button type="submit">Search</button>
+    </form>
+  {% endif %}
+  {% if books_list %}
+    <ul>
+      {% for bookinst in books_list %}
+        <li class="{% if bookinst.is_overdue %}text-danger{% endif %}">
+          {% if bookinst.is_overdue %}
+            OVERDUE
+            {% if perms.catalog.can_mark_returned %}
+              - <a style="border: 1px solid black" href="{% url 'catalog:renew_book_librarian' bookinst.id %}">Renew</a>
+            {% endif %}
+          {% endif %}
+          <a href="{% url 'catalog:book_detail' bookinst.book.pk %}">{{ bookinst.book.title }}</a> ({{ bookinst.due_back }})
+        </li>
+      {% endfor %}
+    </ul>
+  {% else %}
+    <p>There are no books borrowed.</p>
+  {% endif %}
+{% endblock content %}

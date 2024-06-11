@@ -1,0 +1,35 @@
+app = 'cshock-library-nginx'
+primary_region = 'sjc'
+
+[build]
+image = "registry.fly.io/cshock-library-nginx:latest"
+
+# only need services if accessible from public internet (http_service automatically listens on ports
+# 80 and 443 and adds a TCP-to-HTTP handler on port 80 and a TLS offloader and TCP-to-HTTP handler
+# on port 443)
+[http_service]
+internal_port = 443
+force_https = true
+# machine would stopped after a few minutes of inactivity if we let min_machines_running be 0, but
+# not doing that since it makes debugging harder
+auto_stop_machines = true
+# always starts machine if there is no excess capacity OR if there are 0 or only 1 machines running
+# (high-availability definition on fly.io defined as more than 1 machine running)
+auto_start_machines = false
+min_machines_running = 1
+[http_service.http_options]
+# couldn't get this configured to work with nginx without much more debugging
+h2_backend = false
+[http_service.tls_options]
+# h2 and TLS offloading at the edge
+alpn = ["h2", "http/1.1"]
+versions = ["TLSv1.2", "TLSv1.3"]
+default_self_signed = false
+
+[[vm]]
+memory = '256mb'
+cpu_kind = 'shared'
+cpus = 1
+
+[env]
+# this gets populated by the fly.sh script

@@ -1,0 +1,40 @@
+{% extends "core/base.html" %}
+{% block content %}
+  <h1>Name: {{ author.last_name }}, {{ author.first_name }}</h1>
+  <div style="margin-left:20px;margin-top:20px">
+    {% if perms.catalog.change_author %}
+      <a href="{% url "catalog:author_update" author.pk %}">
+        <button>Update</button>
+      </a>
+    {% endif %}
+    {% if perms.catalog.delete_author %}
+      <a href="{% url "catalog:author_delete" author.pk %}">
+        <button>Delete</button>
+      </a>
+    {% endif %}
+    <h4>Books</h4>
+    {% comment %} this queries the related model set from the parent model {% endcomment %}
+    {% for book in author.book_set.all %}
+      <hr />
+      <p>
+        <strong>Title:</strong> {{ book.title }}
+      </p>
+      <p>
+        <strong>Summary:</strong> {{ book.summary }}
+      </p>
+      <p>
+        <strong>Genre:</strong>
+        {% for genre in book.genre.all %}
+          {% if not forloop.last %}
+            {{ genre.name }},
+          {% else %}
+            {{ genre.name }}
+          {% endif %}
+        {% endfor %}
+      </p>
+      <p class="text-muted">
+        <strong>Id:</strong> {{ book.isbn }}
+      </p>
+    {% endfor %}
+  </div>
+{% endblock content %}

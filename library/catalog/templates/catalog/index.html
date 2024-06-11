@@ -1,0 +1,36 @@
+{% extends "core/base.html" %} {% comment %} {% %} are template tags, i.e., functions {% endcomment %}
+{% block title %}
+  Local Library Home
+{% endblock title %}
+{% block content %}
+  <h1>Local Library Home</h1>
+  <p>
+    Welcome to LocalLibrary, a website developed by
+    <em>Mozilla Developer Network</em>!
+  </p>
+  <h2>Dynamic content</h2>
+  <p>The library has the following record counts:</p>
+  <ul>
+    <li>
+      <p>
+        <strong>Books:</strong> {{ num_books }}
+      </p>
+      {% comment %} {{ }} are template variables from the context {% endcomment %}
+      <p>
+        <strong>Books containing "memor":</strong> {{ num_books_containing_memor }}
+      </p>
+    </li>
+    <li>
+      <strong>Copies:</strong> {{ num_instances }}
+    </li>
+    <li>
+      <strong>Copies available:</strong> {{ num_instances_available }}
+    </li>
+    <li>
+      <strong>Authors:</strong> {{ num_authors }}
+    </li>
+    <li>
+      <strong>Genre containing "trash":</strong> {{ num_genre_containing_trash }}
+    </li>
+  </ul>
+{% endblock content %}
