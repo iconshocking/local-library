@@ -131,6 +131,8 @@ http {
       # Django doesn't need to know it's being proxied, and it makes it easier to set allowable hosts
       proxy_set_header Host $host;
       proxy_pass_request_headers on;
+      # 1.1 required for fly.io machines (though doesn't seem to be the case since we don't get 502s...?)
+      proxy_http_version 1.1;
 
       # django CSRF token masking mititgates BREACH attacks, so we can enable compression on HTML responses
       gzip on;
