@@ -13,7 +13,6 @@ from .forms import BookForm, RenewBookModelForm
 from .models import Author, Book, BookInstance
 
 
-# function-based view
 def index(request):
     """View function for home page of site."""
 
