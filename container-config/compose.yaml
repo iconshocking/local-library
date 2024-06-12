@@ -15,7 +15,6 @@ services:
     build:
       context: ..
       dockerfile: ./container-config/Dockerfile_django
-      target: base
       args:
         - DJANGO_PORT=$DJANGO_PORT
     develop:

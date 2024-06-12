@@ -1,5 +1,7 @@
 services:
   django:
+    build:
+      target: base
     # command works differently in docker-compose than in Dockerfile, so have to pass command
     command: sh -c "python manage.py migrate --noinput && python manage.py runserver 0.0.0.0:$DJANGO_PORT --nostatic"
     ports:

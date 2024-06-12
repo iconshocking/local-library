@@ -4,7 +4,6 @@ __pycache__/
 !**.safe.env
 warnings_and_errors.log
 /nginx/statics/**
-!/nginx/statics/staticfiles.json
 *_with_env.*
 requirements.txt
 **/css/gen/*.css

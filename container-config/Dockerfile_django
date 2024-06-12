@@ -1,32 +1,6 @@
-# syntax=docker/dockerfile:1
-
-# ARG is the only instruction that can precede FROM, but it must come before all FROM instructions
 ARG PYTHON_VERSION=3.12.2
-
-# FROM defines the base image. Multiple FROMs can be used to create multiple stages, but only the
-# FINAL stage's image is saved, so copy over anything from previous stages that is needed in the
-# final image. Use 'as' to name the stage since otherwise Docker will just use increasing indices.
-FROM bash:5.2.26 as hello
-RUN echo "Hello, World!" > example.txt
-
-
-
-# Can use 'target' option to only build up to a certain stage (`docker build --target=hello-next
-# .`), which is very useful for defining a base stage followed by split development and production
-# stages.
-#
-# Note: legacy Docker engine would process all stages in order until the target is reached, but
-# BuildKit only processes the target stage and its dependency stages.
-FROM hello as hello-next
-# copies the file from the hello stage to the current stage
-# - (NOTE: can even be used to copy from remote images not already in the build context)
-COPY --from=hello /example.txt /example.txt
-RUN echo "The next world is upon you!" >> example.txt
-
-
 # Use the official Python image as the base image. The slim variant is used to reduce the image
 FROM python:${PYTHON_VERSION}-slim as base
-COPY --from=hello-next /example.txt /example.txt
 
 # generated locally via script beforehand
 COPY requirements.txt ./
@@ -78,8 +52,6 @@ RUN chown appuser -R /app/library/
 # writing to store user-uploaded media
 RUN mkdir -p /user-media
 RUN chown appuser -R /user-media/
-# copy mapping of static files to their hashed names
-COPY ./nginx/statics/staticfiles.json /app/nginx/statics/staticfiles.json
 
 # Switch to the non-privileged user to run the application.
 USER appuser
@@ -98,3 +70,7 @@ WORKDIR /app/library
 # ideally would like to bind only to requests from the host IP, but 'fly-local-6pn' seems to be
 # inconsistent across runtimes and doesn't seem to work here
 CMD python manage.py migrate --noinput && gunicorn library.wsgi -b [::]:${DJANGO_PORT}
+
+FROM base as nondebug
+# copy mapping of static files to their hashed names for static template tags
+COPY ./nginx/statics/staticfiles.json /app/nginx/statics/staticfiles.json

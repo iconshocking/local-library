@@ -1,5 +1,7 @@
 services:
   django:
+    build:
+      target: nondebug
     expose:
       - $DJANGO_PORT
     env_file:
