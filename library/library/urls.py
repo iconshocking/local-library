@@ -26,7 +26,6 @@ from django.views.generic import RedirectView
 urlpatterns = [
     # put this first to intercept the admin/doc/ URL
     path("admin/doc/", include("django.contrib.admindocs.urls")),
-    # default generated
     path("admin/", admin.site.urls),
     path("core/", include("core.urls")),
     path("catalog/", include("catalog.urls")),
