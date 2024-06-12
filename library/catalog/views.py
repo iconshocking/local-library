@@ -1,11 +1,13 @@
 from typing import Any, override
 
+from allauth.account.decorators import verified_email_required
 from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
 from django.db.models.base import Model as Model
 from django.forms import BaseModelForm
 from django.http import HttpResponseRedirect
 from django.shortcuts import render
 from django.urls import reverse, reverse_lazy
+from django.utils.decorators import method_decorator
 from django.views import generic
 from django.views.generic import CreateView, DeleteView, UpdateView
 
@@ -158,6 +160,10 @@ class AuthorDelete(PermissionRequiredMixin, DeleteView):
             )
 
 
+# put a verification requirement here since creating new books allows for uploading cover images
+# that aren't deleting a previous cover image (like the update page does), which is an attack vector
+# to balloon object storage
+@method_decorator(verified_email_required, name="dispatch")
 class BookCreate(PermissionRequiredMixin, CreateView):
     model = Book
     permission_required = "catalog.add_book"
