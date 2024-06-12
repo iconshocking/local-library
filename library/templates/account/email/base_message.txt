@@ -2,6 +2,6 @@
 
 {% block content %}{% endblock content %}
 
-{% blocktrans with site_name=current_site.name site_domain=current_site.domain %}Thank you for using your local library!
+{% blocktrans %}Thank you for using your local library!
 {% endblocktrans %}
 {% endautoescape %}

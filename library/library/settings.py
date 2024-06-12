@@ -269,7 +269,7 @@ EMAIL_HOST_PASSWORD = os.environ.get("SENDGRID_API_KEY")
 EMAIL_PORT = 587  # TLS port
 EMAIL_USE_TLS = True
 # has to match configured domain in SendGrid
-DEFAULT_FROM_EMAIL = "email@cshock.tech"
+DEFAULT_FROM_EMAIL = "Local Library Assistant <email@cshock.tech>"
 
 # entry point to URLConf construction
 ROOT_URLCONF = "library.urls"
