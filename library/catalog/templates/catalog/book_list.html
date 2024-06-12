@@ -14,10 +14,6 @@
         <li>
           <a href="{{ book.get_absolute_url }}">{{ book.title }}</a>
           ({{ book.author }})
-          {% comment %} additinal variable created by the 'for' tag  {% endcomment %}
-          {% if forloop.last %}
-            {% if not page_obj or not page_obj.has_next %}<small>Last book in the list.</small>{% endif %}
-          {% endif %}
           {% if perms.catalog.change_book %}
             <a href="{% url "catalog:book_update" book.pk %}">
               <button>Update</button>
