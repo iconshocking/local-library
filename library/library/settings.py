@@ -111,10 +111,10 @@ INSTALLED_APPS = [
     # storage)
     "django_cleanup.apps.CleanupConfig",
     "django_prometheus",
-    "django_browser_reload",
 ] + (
     [
         "debug_toolbar",
+        "django_browser_reload",
     ]
     if DEBUG
     else []
