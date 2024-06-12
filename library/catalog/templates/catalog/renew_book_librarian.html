@@ -5,7 +5,6 @@
   <p {% if book_instance.is_overdue %}class="text-danger"{% endif %}>Due date: {{ book_instance.due_back }}</p>
   <form action="" method="post">
     {% csrf_token %}
-    {% comment %} don't use form.as_p/table/ul since default is .as_div which is the non-legacy approach {% endcomment %}
     {{ form }}
     <input type="submit" value="Submit">
   </form>

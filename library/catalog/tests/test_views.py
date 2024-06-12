@@ -139,7 +139,7 @@ class LoanedBookInstancesByUserListViewTest(TestUserTestCase):
 
     def test_logged_in_uses_correct_template(self):
         response = self.login_and_get_view_and_assert_logged_in()
-        self.assertTemplateUsed(response, "catalog/all_loaned_books.html")
+        self.assertTemplateUsed(response, "catalog/loaned_books.html")
 
     def test_only_borrowed_books_in_list(self):
         response = self.login_and_get_view_and_assert_logged_in()

@@ -195,7 +195,7 @@ ACCOUNT_EMAIL_CONFIRMATION_EXPIRE_DAYS = 3  # default
 ACCOUNT_EMAIL_NOTIFICATIONS = True
 ACCOUNT_EMAIL_REQUIRED = True  # defauls to false
 ACCOUNT_EMAIL_VERIFICATION = (
-    "mandatory"  # default is "optional"; can also be "none" or "mandatory"
+    "none"  # default is "optional"; can also be "none" or "mandatory"
 )
 ACCOUNT_EMAIL_SUBJECT_PREFIX = "cshock.tech Library: "
 # whether emails are sent when reset password is requested for an email that doesn't have a matching

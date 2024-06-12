@@ -39,10 +39,6 @@
         </li>
       {% endfor %}
     </ul>
-    <p>{{ view.context_object_name }}</p>
-    <p>{{ viewfunction }}</p>
-    {% comment %} Note static functions cannot be run. Only variables in the context data and
-    attributes on those variables can be accessed. {% endcomment %}
   {% else %}
     <p>There are no books in the library.</p>
   {% endif %}

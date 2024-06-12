@@ -22,7 +22,7 @@ class HashOnlyManifestStaticFilesStorage(Base):
                 elif name != hashed_name:
                     # Django isn't detecting source map URL comments correctly, so we need to keep the
                     # unhashed source maps
-                    if name.endswith(".map"):
+                    if not name.endswith(".map") and not name.endswith(".ico"):
                         os.remove(self.path(name))
 
 

@@ -16,7 +16,7 @@
         <li class="{% if bookinst.is_overdue %}text-danger{% endif %}">
           {% if bookinst.is_overdue %}
             OVERDUE
-            {% if perms.catalog.can_mark_returned %}
+            {% if perms.catalog.can_mark_returned and show_renew_option %}
               - <a style="border: 1px solid black" href="{% url 'catalog:renew_book_librarian' bookinst.id %}">Renew</a>
             {% endif %}
           {% endif %}
