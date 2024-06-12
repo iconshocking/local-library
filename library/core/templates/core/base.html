@@ -22,7 +22,10 @@
     {% comment %} Bootstrap CSS for crispy forms and CSS classes in the template {% endcomment %}
     <link href="{% static 'core/css/bootstrap.min.css' %}" rel="stylesheet">
     {% comment %} Add additional CSS in static file {% endcomment %}
-    <link rel="stylesheet" href="{% static 'core/css/gen/styles.css' %}" />
+    <link rel="stylesheet" href="{% static 'core/css/gen/base.css' %}" />
+    <style>
+      {% include "core/css/inlined/fonts.css" %}
+    </style>
     {% block head_extra %}
     {% endblock head_extra %}
   </head>

@@ -1,0 +1,43 @@
+:root {
+  --background-color: #fff2d7;
+  --primary-color: #ffe0b5;
+  --secondary-color: #f8c794;
+  --tertiary-color: #d8ae7e;
+  --text-color: black;
+}
+
+body {
+  background: var(--background-color);
+  color: var(--text-color);
+  font-family: libre-franklin, sans-serif;
+}
+
+h1, h2 {
+  font-weight: 300;
+  font-stretch: 75%;
+  letter-spacing: -0.02em;
+}
+
+p {
+  font-weight: 350;
+}
+
+.sidebar-nav {
+  margin-top: 20px;
+  padding: 0;
+  list-style: none;
+}
+
+#logout-form {
+  display: inline;
+}
+
+#logout-form button {
+  padding: 0;
+  margin: 0;
+}
+
+img {
+  max-width: 100%;
+  height: auto;
+}
