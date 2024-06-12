@@ -34,7 +34,6 @@ urlpatterns = [
     path("", RedirectView.as_view(url="/catalog/", permanent=True)),
     # metrics URL for prometheus scraping
     path("", include("django_prometheus.urls")),
-    path("__reload__/", include("django_browser_reload.urls")),
 ]
 if settings.DEBUG:
     # werid prependend slash in STATIC_URL once it gets set
@@ -52,4 +51,5 @@ if settings.DEBUG:
         + [
             path("__debug__/", include("debug_toolbar.urls")),
         ]
+        + [path("__reload__/", include("django_browser_reload.urls"))]
     )
