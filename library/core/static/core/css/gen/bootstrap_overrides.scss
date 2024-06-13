@@ -1,0 +1,15 @@
+.navbar {
+  margin: 0 -0.5rem 1rem;
+}
+
+.navbar-brand {
+  margin-bottom: 0;
+}
+
+.nav-link {
+  --bs-nav-link-padding-y: 0.25rem;
+
+  &.active {
+    font-weight: 550;
+  }
+}
