@@ -24,7 +24,8 @@
     <script src="{% static 'core/js/bootstrap.min.js' %}" defer></script>
     {% comment %} Add additional CSS in static file {% endcomment %}
     <link rel="stylesheet" href="{% static 'core/css/gen/base.css' %}" />
-    <link rel="stylesheet" href="{% static 'core/css/gen/bootstrap_overrides.css' %}" />
+    <link rel="stylesheet"
+          href="{% static 'core/css/gen/bootstrap_overrides.css' %}" />
     <style>{% include "core/css/inlined/fonts.css" %}</style>
     {% block head_extra %}
     {% endblock head_extra %}
