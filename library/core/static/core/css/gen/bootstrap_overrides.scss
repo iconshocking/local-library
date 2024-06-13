@@ -1,3 +1,5 @@
+$bs-breakpoint-lg: 992px;
+
 .navbar {
   margin: 0 -0.5rem 1rem;
 }
@@ -9,6 +11,8 @@
 .nav-link {
   --bs-nav-link-padding-y: 0.25rem;
 
+  display: inline-block;
+
   &.active {
     font-weight: 550;
   }
@@ -16,4 +20,16 @@
 
 .nav-item {
   width: fit-content;
+
+  @media (min-width: $bs-breakpoint-lg) {
+    &::before {
+      content: "|";
+    }
+
+    &:last-of-type {
+      &::after {
+        content: "|";
+      }
+    }
+  }
 }
