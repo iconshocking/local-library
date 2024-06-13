@@ -10,6 +10,8 @@ services:
       target: preprod
     env_file:
       - ./git-safe/.preprod.safe.env
+    ports:
+      - 81:81
     develop:
       watch:
         - path: ./statics

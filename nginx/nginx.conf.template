@@ -102,6 +102,15 @@ http {
     return 301 https://playground.fly-io.cshock.tech$request_uri;
   }
 
+  # Preprod hosting from different port to reveal CORS issues
+  server {
+    server_name 127.0.0.1;
+    listen 81;
+    location /statics/ {
+      include /etc/nginx/conf.d/statics.conf;
+    }
+    include /etc/nginx/conf.d/user-media.conf;
+  }
 
   server {
     # HTTPS redirect on prod handled by fly.io
@@ -111,18 +120,6 @@ http {
       cshock-library-nginx.fly.dev
       127.0.0.1;
 
-    # - 'location @[name]' allows for referencing via name by other directives (instead of URL)
-    # - possible to nest location directives
-    # - use 'location ~ [regex]' syntax if not using simple prefix matching (use '~*' for case-insensitive)
-
-    # statics
-    location /statics/ {
-      include /etc/nginx/conf.d/statics.conf;
-    }
-
-    include /etc/nginx/conf.d/user-media.conf;
-
-    # '=' for exact matches avoids needing to check other locations and speeds up matching
     location / {
       # do NOT set 'gzip_proxied' for these proxied HTML responses because that makes them vulnerable to BREACH
 
@@ -138,7 +135,7 @@ http {
       gzip on;
       # requires 'Content-Length' response header to be set
       gzip_min_length 1000;
-      # must set this when receiving a proxied request (disable if proxy is a CDN that wants un-compressed files for caching)
+      # set this when receiving a proxied request (disable if proxy is a CDN that wants un-compressed files for caching)
       gzip_proxied any;
 
       # don't cache and set private for extra clarity
@@ -155,12 +152,6 @@ http {
       # which is fine because Location header supports relative URLs.)
       proxy_redirect default;
       client_max_body_size 4M;
-
-      # 'proxy_buffers' defines the number and size of buffers to use for receiving the proxied response (can also just use defaults)
-      # 'proxy_buffer_size' defines the buffer size for the first parts of the response, which can be smaller since it is usually just a header
-
-      # 'proxy_bind' allows for setting the source IP address for connecting to the proxied server
-      # (e.g. 'proxy_bind 127.0.0.2' for a different proxy)
     }
   }
 }
