@@ -12,6 +12,8 @@ events {
 }
 
 http {
+  include /etc/nginx/conf.d/map_vars.conf;
+
   log_format real_ip_with_request_id
     '{'
     '"request_id":"$request_id",'
@@ -58,7 +60,10 @@ http {
   server {
     server_name static.playground.fly-io.cshock.tech;
     listen ${NGINX_LISTEN_PORT};
-    include /etc/nginx/conf.d/statics.conf;
+    # must wrap in location block to use if statement
+    location / {
+      include /etc/nginx/conf.d/statics.conf;
+    }
   }
 
   # redirect www to non-www
