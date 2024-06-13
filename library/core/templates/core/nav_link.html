@@ -1,0 +1,4 @@
+<li class="nav-item">
+  <a {% if request.path != path %} class="nav-link" {% else %} class="nav-link active" aria-current="page" {% endif %}
+     href="{{ path }}{% if query %}{{ query }}{% endif %}">{{ text }}</a>
+</li>

@@ -10,22 +10,40 @@ body {
   background: var(--background-color);
   color: var(--text-color);
   font-family: libre-franklin, sans-serif;
+  font-weight: 400;
+  padding: 1rem 2rem;
 }
 
-h1, h2 {
+h1,
+h2 {
   font-weight: 300;
   font-stretch: 75%;
   letter-spacing: -0.02em;
 }
 
-p {
-  font-weight: 350;
+h1 {
+  font-size: 2.5rem;
+  margin: 0 0 1rem;
 }
 
-.sidebar-nav {
-  margin-top: 20px;
-  padding: 0;
-  list-style: none;
+.nav-link {
+  --bs-nav-link-padding-y: 0.25rem;
+
+  &.active {
+    font-weight: 550;
+  }
+}
+
+.navbar {
+  margin: 0 -0.5rem 1rem;
+}
+
+.navbar-brand {
+  margin-bottom: 0;
+}
+
+.navbar-brand-sub {
+  margin-bottom: 0;
 }
 
 #logout-form {

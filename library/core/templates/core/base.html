@@ -19,75 +19,85 @@
     <link rel="icon" type="image/png" sizes="16x16" href="{% static "core/images/favicon/favicon-16x16.png" %}" />
     {% comment %} used to set background color for pull-to-refresh on mobile Safari {% endcomment %}
     <meta name="theme-color" content="rgb(255 255 255)" />
-    {% comment %} Bootstrap CSS for crispy forms and CSS classes in the template {% endcomment %}
+    {% comment %} Bootstrap CSS/JS for crispy forms and CSS classes in the template {% endcomment %}
     <link href="{% static 'core/css/bootstrap.min.css' %}" rel="stylesheet">
+    <script src="{% static 'core/js/bootstrap.min.js' %}" defer></script>
     {% comment %} Add additional CSS in static file {% endcomment %}
     <link rel="stylesheet" href="{% static 'core/css/gen/base.css' %}" />
-    <style>
-      {% include "core/css/inlined/fonts.css" %}
-    </style>
+    <style>{% include "core/css/inlined/fonts.css" %}</style>
     {% block head_extra %}
     {% endblock head_extra %}
   </head>
   <body>
-    <div class="container-fluid full-container">
-      <div class="row">
-        <div class="col-sm-2">
-          {% block sidebar %}
-            <ul class="sidebar-nav">
-              <li>
-                <a href="{% url 'catalog:index' %}">Home</a>
-              </li>
-              <li>
-                <a href="{% url 'catalog:books' %}">All books</a>
-              </li>
-              <li>
-                <a href="{% url "catalog:authors" %}">All authors</a>
-              </li>
-              {% if user.is_authenticated %}
-                <li>User: {{ user.get_username }}</li>
-                {% if perms.catalog.can_mark_returned %}
-                  <li>
-                    <a href="{% url 'catalog:all_borrowed' %}">All Borrowed</a>
-                  </li>
-                {% endif %}
-                <li>
-                  <a href="{% url 'catalog:my_borrowed' %}">My Borrowed</a>
-                </li>
-                <li>
-                  <form id="logout-form" method="post" action="{% url 'account_logout' %}">
-                    {% csrf_token %}
-                    <button type="submit" class="btn btn-link">Logout</button>
-                  </form>
-                </li>
-              {% else %}
-                <li>
-                  {% comment %} providing 'next' parameter is the default way of setting/retrieving
-                  a redirect URL when using RedirectURLMixin {% endcomment %}
-                  <a href="{% url 'account_login' %}?next={{ request.path }}">Login</a>
-                </li>
-              {% endif %}
-            </ul>
-          {% endblock sidebar %}
-        </div>
-        <main class="col-sm-10 ">
-          {% block content %}
-          {% endblock content %}
-          {% block pagination %}
-            {% if is_paginated %}
-              <div class="pagination">
-                <span class="page-links">
-                  {% if page_obj.has_previous %}
-                    <a href="{{ request.path }}?page={{ page_obj.previous_page_number }}">previous</a>
-                  {% endif %}
-                  <span class="page-current">Page {{ page_obj.number }} of {{ paginator.num_pages }}.</span>
-                  {% if page_obj.has_next %}<a href="{{ request.path }}?page={{ page_obj.next_page_number }}">next</a>{% endif %}
-                </span>
+    <div class="full-container">
+      <div>
+        {% block navbar %}
+          <nav class="navbar navbar-expand-lg bg-body-tertiary">
+            <div class="container-fluid">
+              <div>
+                <p class="navbar-brand" href="#">Local Library</p>
+                {% if user.get_username %}<p class="navbar-brand-sub">User: {{ user.get_username }}</p>{% endif %}
               </div>
-            {% endif %}
-          {% endblock pagination %}
-        </main>
+              <button class="navbar-toggler"
+                      type="button"
+                      data-bs-toggle="collapse"
+                      data-bs-target="#navbar-toggler"
+                      aria-controls="#navbar-toggler"
+                      aria-expanded="false"
+                      aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+              </button>
+              <div class="collapse navbar-collapse" id="navbar-toggler">
+                <ul class="navbar-nav me-auto mb-2 mt-2 mb-lg-0">
+                  {% url 'catalog:index' as path %}
+                  {% include "core/nav_link.html" with path=path text="Home" %}
+                  {% url 'catalog:books' as path %}
+                  {% include "core/nav_link.html" with path=path text="All books" %}
+                  {% url 'catalog:authors' as path %}
+                  {% include "core/nav_link.html" with path=path text="All authors" %}
+                  {% if user.is_authenticated %}
+                    {% if perms.catalog.can_mark_returned %}
+                      {% url 'catalog:all_borrowed' as path %}
+                      {% include "core/nav_link.html" with path=path text="All borrowed" %}
+                    {% endif %}
+                    {% url 'catalog:my_borrowed' as path %}
+                    {% include "core/nav_link.html" with path=path text="My borrowed" %}
+                    <li class="nav-link">
+                      <form id="logout-form" method="post" action="{% url 'account_logout' %}">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-link">Sign out</button>
+                      </form>
+                    </li>
+                  {% else %}
+                    {% url 'account_login' as path %}
+                    {% comment %} providing 'next' parameter is the default way of setting/retrieving
+                    a redirect URL when using RedirectURLMixin {% endcomment %}
+                    {% comment %} turn off djlint to prevent query string breaking with auto-formatted new line {% endcomment %}
+                    <!-- djlint:off -->{% include "core/nav_link.html" with path=path query="?next="|add:request.path text="Sign in" %}<!-- djlint:on -->
+                  {% endif %}
+                </ul>
+              </div>
+            </div>
+          </nav>
+        {% endblock navbar %}
       </div>
+      <main>
+        {% block content %}
+        {% endblock content %}
+        {% block pagination %}
+          {% if is_paginated %}
+            <div class="pagination">
+              <span class="page-links">
+                {% if page_obj.has_previous %}
+                  <a href="{{ request.path }}?page={{ page_obj.previous_page_number }}">previous</a>
+                {% endif %}
+                <span class="page-current">Page {{ page_obj.number }} of {{ paginator.num_pages }}.</span>
+                {% if page_obj.has_next %}<a href="{{ request.path }}?page={{ page_obj.next_page_number }}">next</a>{% endif %}
+              </span>
+            </div>
+          {% endif %}
+        {% endblock pagination %}
+      </main>
       {% block extra_body %}
       {% endblock extra_body %}
     </div>
