@@ -1,7 +1,3 @@
-# shouldn't need to increase max connections supported anymore for production because linux kernel was updated in 2019 to
-# default to 4096 (no longer need 'net.core.somaxconn = 4096')
-
-# 'auto' sets value to number of cores (default value is 1)
 worker_processes auto;
 # default for the docker image
 user nginx nginx;
@@ -13,12 +9,8 @@ error_log /log/error.log warn;
 events {
   # Default: 1024
   worker_connections 4096;
-  # 'accept_mutex' defaults to off, so all processes will wake up to accept connections, so this
-  # creates wasted resources at low traffic times (thundering herd problem)
 }
 
-
-# no caching configured for this config
 http {
   log_format real_ip_with_request_id
     '{'
@@ -44,45 +36,19 @@ http {
   # since this is behind a proxy, we want to log the real address of the client in "X-Forwarded-For" header
   access_log /log/access.log real_ip_with_request_id;
 
-  # 'include' imports settings from another file (this is a default that ships with nginx)
   include mime.types;
   default_type application/octet-stream;
 
   # fly.io supports http2 ('proxy_pass' does not and converts to HTTP/1.1, but this has less
-  # performance overhead on the back channel side since the multiplexing of responses is mostly
+  # performance benefit on the back channel side since the multiplexing of responses is mostly
   # beneficial just for the client making requests in parallel)
   # - disabling for now in fly_nginx.toml because the debugging is giving me a headache
 
-  # can support HTTP/2 server push too, which allows pushing additional resources when another resource is requested
-
-  # define the upstream server group
-  # (non-HTTP servers can be proxied to but require different directives like 'uwsgi_pass', etc.)
   upstream django {
-    # domain / ip address and port of the upstream server
     server ${DJANGO_IP}:${DJANGO_PORT};
-
-    # could define multiple server to support load balancing
-    # options:
-    # - weight=[number]: weights servers according to how many requests they should receive
-    # - backup: only use this server if the others are fully saturated
-
-    # load balancing options:
-    # - default: Round Robin even request distribution
-    # - 'least_conn': server with least connections
-    # - 'ip_hash:'' maps same IP to same server (to assist with sessions, caching, etc.)
-    #   - 'server [address] down': preserve server hashes even if one server is taken out of rotation
-    #     (to avoid IPs getting new mappings, except for those on the down server)
-    # - 'hash' [args]: like 'ip_hash' but with your own defined keys
-
-    # Using something like HAProxy in front of nginx might be better for sticky sessions
-    # that don't have the balancing problems of hashing balancing
   }
 
-  # each 'server' is a virtual server that covers IPS and/or domains
   server {
-    # 'default_server' designates which virtual server for a specific port should be used if no server_name is matched
-    # (default is the first in the file for that port)
-
     # define no 'server_name', so if no host match (crawler or something hitting the server via raw
     # IP or wrong host), close the connection
     listen ${NGINX_LISTEN_PORT} default_server;
@@ -115,7 +81,6 @@ http {
   server {
     # HTTPS redirect on prod handled by fly.io
     listen ${NGINX_LISTEN_PORT} backlog=4096;
-    # defines the required options for HOST header on request (can use wildcard * and multiple space separated domains
     server_name playground.fly-io.cshock.tech
       cshock-library-nginx.fly.dev
       127.0.0.1;
