@@ -27,6 +27,7 @@
     <link rel="stylesheet"
           href="{% static 'core/css/gen/bootstrap_overrides.css' %}" />
     <style>{% include "core/css/inlined/fonts.css" %}</style>
+    <script src="{% static "core/js/base_page.js" %}" defer></script>
     {% block head_extra %}
     {% endblock head_extra %}
   </head>
@@ -40,16 +41,17 @@
                 <p class="navbar-brand" href="#">Local Library</p>
                 {% if user.get_username %}<p class="navbar-brand-sub">User: {{ user.get_username }}</p>{% endif %}
               </div>
-              <button class="navbar-toggler"
+              <button class="navbar-toggler collapsed"
+                      id="navbar-toggler"
                       type="button"
                       data-bs-toggle="collapse"
-                      data-bs-target="#navbar-toggler"
-                      aria-controls="#navbar-toggler"
+                      data-bs-target="#navbar-toggler-target"
+                      aria-controls="#navbar-toggler-target"
                       aria-expanded="false"
                       aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
               </button>
-              <div class="collapse navbar-collapse" id="navbar-toggler">
+              <div class="collapse navbar-collapse" id="navbar-toggler-target">
                 <ul class="navbar-nav me-auto mb-2 mt-2 mb-lg-0 mt-lg-0">
                   {% url 'catalog:index' as path %}
                   {% include "core/nav_link.html" with path=path text="Home" %}
@@ -64,10 +66,10 @@
                     {% endif %}
                     {% url 'catalog:my_borrowed' as path %}
                     {% include "core/nav_link.html" with path=path text="My borrowed" %}
-                    <li class="nav-link">
+                    <li class="nav-item">
                       <form id="logout-form" method="post" action="{% url 'account_logout' %}">
                         {% csrf_token %}
-                        <button type="submit" class="btn btn-link">Sign out</button>
+                        <button type="submit" class="btn btn-link nav-link">Sign out</button>
                       </form>
                     </li>
                   {% else %}
