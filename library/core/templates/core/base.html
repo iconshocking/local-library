@@ -66,12 +66,8 @@
                     {% endif %}
                     {% url 'catalog:my_borrowed' as path %}
                     {% include "core/nav_link.html" with path=path text="My borrowed" %}
-                    <li class="nav-item">
-                      <form id="logout-form" method="post" action="{% url 'account_logout' %}">
-                        {% csrf_token %}
-                        <button type="submit" class="btn btn-link nav-link">Sign out</button>
-                      </form>
-                    </li>
+                    {% url 'account_logout' as path %}
+                    {% include "core/nav_link.html" with path=path text="Sign out" %}
                   {% else %}
                     {% url 'account_login' as path %}
                     {% comment %} providing 'next' parameter is the default way of setting/retrieving
