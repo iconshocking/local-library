@@ -1,10 +1,17 @@
 import importlib
 import logging
 import os
+from typing import override
 from uuid import uuid4
 
 from django.contrib.staticfiles.storage import ManifestStaticFilesStorage as Base
 from django.core.files.storage import Storage
+
+
+class HashOnDebugManifestStaticFilesStorage(Base):
+    @override
+    def url(self, name: str, force: bool = False) -> str:
+        return super().url(name, force=not name.startswith("debug_toolbar"))  # type: ignore
 
 
 class HashOnlyManifestStaticFilesStorage(Base):

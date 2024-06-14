@@ -4,6 +4,11 @@ services:
   django:
     env_file:
       - ./git-safe/.preprod.safe.env
+    develop:
+      watch:
+        - path: ../nginx/statics/staticfiles.json
+          target: /app/nginx/statics/staticfiles.json
+          action: sync
 
   nginx:
     build:
@@ -14,7 +19,7 @@ services:
       - 81:81
     develop:
       watch:
-        - path: ./statics
+        - path: ../nginx/statics
           target: /statics
           action: sync
 

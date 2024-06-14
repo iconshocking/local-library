@@ -1,17 +1,17 @@
 FROM nginx:1.26.0 as prod
 
-COPY nginx.conf /etc/nginx/
+# create empty file, which will be populated for preprod
 RUN touch /etc/nginx/conf.d/user-media.conf
+
+COPY nginx.conf /etc/nginx/
 COPY statics.conf /etc/nginx/conf.d/
 COPY cors.conf /etc/nginx/conf.d/
-COPY map_vars.conf /etc/nginx/conf.d/
 # template used for environment variables susbstitution
 COPY nginx.conf.template /etc/nginx/templates/
+COPY map_vars.conf.template /etc/nginx/templates/
+
 
 RUN mkdir -p /log && touch /log/error.log && touch /log/access.log
-
-# shouldn't need to increase max connections supported because linux kernel was updated in 2019 to
-# default to 4096 (no longer need 'net.core.somaxconn = 4096')
 
 COPY ./statics /statics
 

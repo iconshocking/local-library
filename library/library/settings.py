@@ -274,14 +274,27 @@ DEFAULT_FROM_EMAIL = "Local Library Assistant <email@cshock.tech>"
 # entry point to URLConf construction
 ROOT_URLCONF = "library.urls"
 
+
+def get_template_loaders():
+    base_loaders = [
+        "django.template.loaders.filesystem.Loader",
+        "django.template.loaders.app_directories.Loader",
+    ]
+    # toggle env var if you want to edit preprod templates in real time (not needed in dev since
+    # 'runserver' cmd already invalidates template cache on template changes)
+    if ENV == "preprod" and os.environ.get("DISABLE_PREPROD_TEMPLATE_CACHING", False):
+        return base_loaders
+    else:
+        return [("django.template.loaders.cached.Loader", base_loaders)]
+
+
 TEMPLATES = [
     {
         # engine for template rendering
         "BACKEND": "django.template.backends.django.DjangoTemplates",
         # look in the project dir for anything app-agnostic
         "DIRS": [BASE_DIR / "templates"],
-        # set this to False if putting all templates at the project level
-        "APP_DIRS": True,
+        # do not set APP_DIRS when providing OPTIONS.loaders
         "OPTIONS": {
             "context_processors": [
                 "django.template.context_processors.debug",
@@ -289,16 +302,7 @@ TEMPLATES = [
                 "django.contrib.auth.context_processors.auth",
                 "django.contrib.messages.context_processors.messages",
             ],
-            # Cached template loader is enabled by default when DEBUG = False and stores compiled
-            # templates in memory to skip the file system on successive calls (does not reference
-            # CACHES setting - always in-memory)
-            # - NOTE: built-in template tags are safe to use with cached loader, but make sure any
-            #   custom tags are thread-safe (if multi-threading)
-            #
-            # "loaders": [ ( "django.template.loaders.cached.Loader", [
-            #     "django.template.loaders.filesystem.Loader",
-            #         "django.template.loaders.app_directories.Loader", "path.to.custom.Loader", ],
-            #         ), ],
+            "loaders": get_template_loaders(),
         },
     },
 ]
@@ -361,11 +365,17 @@ if USE_REDIS_CACHE:
 def static_files_storage():
     if USING_WHITENOISE:
         return "whitenoise.storage.CompressedManifestStaticFilesStorage"
-    # can't use hash-only on debug because deug-toolbar doesn't properly use static template tag
-    elif not DEBUG:
-        return "core.storage.HashOnlyManifestStaticFilesStorage"
+    
+    storage: str
+    if ENV == "dev":
+        storage = "django.contrib.staticfiles.storage.StaticFilesStorage"
+    # can't use hash-only on debug because debug-toolbar doesn't properly use static template tag
+    elif ENV == "preprod" and DEBUG:
+        # this avoids having to configure some annoying cache headers with nginx
+        storage = "core.storage.HashOnDebugManifestStaticFilesStorage"
     else:
-        return "django.contrib.staticfiles.storage.ManifestStaticFilesStorage"
+        return "core.storage.HashOnlyManifestStaticFilesStorage"
+    return storage
 
 
 def media_files_storage():
