@@ -35,6 +35,8 @@ img {
   height: auto;
 }
 
-.transition-negator {
-  transition: none !important;
+// makes crispy form management with allauth simpler
+form {
+  width: 500px;
+  max-width: 85vw;
 }
