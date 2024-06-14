@@ -25,11 +25,5 @@ $bs-breakpoint-lg: 992px;
     &::before {
       content: "|";
     }
-
-    &:last-of-type {
-      &::after {
-        content: "|";
-      }
-    }
   }
 }
