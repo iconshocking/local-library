@@ -27,6 +27,9 @@
     <link rel="stylesheet" href="{% static 'core/css/gen/utils.css' %}" />
     <link rel="stylesheet"
           href="{% static 'core/css/gen/bootstrap_overrides.css' %}" />
+    {% comment %} don't need to preload since the font URL is in the inlined CSS instead of a
+    separate CSS download, but adding it as good practice if that changes {% endcomment %}
+    <link rel="preload" as="style" href="{% static "core/fonts/Libre_Franklin/LibreFranklin-VariableFont_wght.ttf" %}">
     <style>{% include "core/css/inlined/fonts.css" %}</style>
     <link rel="preload" href="{% static "core/js/base_page.js" %}" as="script">
     {% block head_extra %}
