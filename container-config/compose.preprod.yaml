@@ -5,6 +5,7 @@ services:
     env_file:
       - ./git-safe/.preprod.safe.env
     develop:
+      # syncs after calling ./collect_statics_preprod.sh
       watch:
         - path: ../nginx/statics/staticfiles.json
           target: /app/nginx/statics/staticfiles.json

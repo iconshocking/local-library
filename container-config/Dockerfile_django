@@ -72,5 +72,8 @@ WORKDIR /app/library
 CMD python manage.py migrate --noinput && gunicorn library.wsgi -b [::]:${DJANGO_PORT}
 
 FROM base as nondebug
+USER root
 # copy mapping of static files to their hashed names for static template tags
 COPY ./nginx/statics/staticfiles.json /app/nginx/statics/staticfiles.json
+RUN chown appuser -R /app/nginx/statics/
+USER appuser

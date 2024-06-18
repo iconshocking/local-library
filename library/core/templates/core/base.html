@@ -28,7 +28,7 @@
     <link rel="stylesheet"
           href="{% static 'core/css/gen/bootstrap_overrides.css' %}" />
     <style>{% include "core/css/inlined/fonts.css" %}</style>
-    <script src="{% static "core/js/base_page.js" %}" defer></script>
+    <link rel="preload" href="{% static "core/js/base_page.js" %}" as="script">
     {% block head_extra %}
     {% endblock head_extra %}
   </head>
@@ -80,6 +80,9 @@
               </div>
             </div>
           </nav>
+          {% comment %} script here ensures navbar expand/collapse is laid out before lower HTML to
+          avoid layout shift {% endcomment %}
+          <script src="{% static "core/js/base_page.js" %}"></script>
         {% endblock navbar %}
       </div>
       <main>

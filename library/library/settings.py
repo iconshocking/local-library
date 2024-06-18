@@ -282,7 +282,10 @@ def get_template_loaders():
     ]
     # toggle env var if you want to edit preprod templates in real time (not needed in dev since
     # 'runserver' cmd already invalidates template cache on template changes)
-    if ENV == "preprod" and os.environ.get("DISABLE_PREPROD_TEMPLATE_CACHING", False):
+    if (
+        ENV == "preprod"
+        and os.environ.get("DISABLE_PREPROD_NONDEBUG_TEMPLATE_CACHING", "") == "True"
+    ):
         return base_loaders
     else:
         return [("django.template.loaders.cached.Loader", base_loaders)]
