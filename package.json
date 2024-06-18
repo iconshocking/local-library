@@ -4,8 +4,10 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "css-gen": "postcss library/**/static/*/css/gen/*.scss --base ./ --dir ./ --ext .css",
-    "css-gen-watch": "pnpm css-gen --watch"
+    "css-gen": "postcss library/**/static/**/css/gen/*.scss --base ./ --dir ./ --ext .css",
+    "css-gen-watch": "pnpm css-gen --watch",
+    "preprod-collect-statics": "cd container-config && poetry run ./collect_statics.sh ./secrets/.dev.env ./secrets/.preprod.env ./git-safe/.dev.safe.env ./git-safe/.prod.safe.env ./git-safe/.preprod.safe.env",
+    "preprod-statics-watch": "pnpm css-gen-watch & { find library/ -name '*.css'; find library/ -name '*.js'; } | entr -s 'pnpm preprod-collect-statics'"
   },
   "keywords": [],
   "author": "",
