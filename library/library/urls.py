@@ -45,8 +45,9 @@ if settings.DEBUG:
         static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
         + [
             # serve static files in development that never cache to avoid development annoyances,
-            # but cache debug toolbar to reduce it messing with layout shift
-            re_path(f"^{static_url}(?P<path>debug_toolbar/.*/$)", serve_static),
+            # but cache debug toolbar statics and fonts to reduce it messing with layout shift
+            re_path(f"^{static_url}(?P<path>debug_toolbar/.*$)", serve_static),
+            re_path(f"^{static_url}(?P<path>.*/*.ttf$)", serve_static),
             path(static_url + "<path:path>", never_cache(serve_static)),
         ]
         + [
