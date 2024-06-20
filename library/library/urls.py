@@ -19,7 +19,7 @@ from django.conf import settings
 from django.conf.urls.static import static
 from django.contrib import admin
 from django.contrib.staticfiles.views import serve as serve_static
-from django.urls import include, path
+from django.urls import include, path, re_path
 from django.views.decorators.cache import never_cache
 from django.views.generic import RedirectView
 
@@ -44,7 +44,9 @@ if settings.DEBUG:
         # serve media files in development
         static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
         + [
-            # serve static files in development that never cache to avoid development annoyances
+            # serve static files in development that never cache to avoid development annoyances,
+            # but cache debug toolbar to reduce it messing with layout shift
+            re_path(f"^{static_url}(?P<path>debug_toolbar/.*/$)", serve_static),
             path(static_url + "<path:path>", never_cache(serve_static)),
         ]
         + [
