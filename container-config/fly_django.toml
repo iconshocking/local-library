@@ -10,6 +10,20 @@ swap_size_mb = 512
 [build]
 image = "registry.fly.io/cshock-library-django:latest"
 
+[[services]]
+# should be equal to DJANGO_PORT
+internal_port = 8000
+auto_stop_machines = false
+auto_start_machines = false
+min_machines_running = 1
+# explicitly bind to port to use private fly.io IP to allow for autoscaling
+[[services.ports]]
+handlers = ["http"]
+# should be equal to DJANGO_PORT
+port = 8000
+# flycast is HTTP only
+force_https = false
+
 [deploy]
 # 'release_command' is an initial command to run before the container runs its image's normal start
 # command

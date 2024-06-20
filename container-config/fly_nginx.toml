@@ -12,7 +12,6 @@ internal_port = 443
 force_https = true
 # if >1 machine: if enough machines not over connection soft limit, stop machine; if 1 machine: stops machine if no traffic.
 # WARNING: makes debugging harder since you only have 5 minutes to debug before the machine is stopped
-# TODO: determine why when turning off autoscaling to zero, nginx throws a single 502 after about the autostop time
 auto_stop_machines = true
 # starts a machine if no machines running or all over connection soft limit
 auto_start_machines = true
