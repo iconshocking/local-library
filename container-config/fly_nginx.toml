@@ -10,13 +10,13 @@ image = "registry.fly.io/cshock-library-nginx:latest"
 [http_service]
 internal_port = 443
 force_https = true
-# machine would stopped after a few minutes of inactivity if we let min_machines_running be 0, but
-# not doing that since it makes debugging harder
+# if >1 machine: if enough machines not over connection soft limit, stop machine; if 1 machine: stops machine if no traffic.
+# WARNING: makes debugging harder since you only have 5 minutes to debug before the machine is stopped
+# TODO: determine why when turning off autoscaling to zero, nginx throws a single 502 after about the autostop time
 auto_stop_machines = true
-# always starts machine if there is no excess capacity OR if there are 0 or only 1 machines running
-# (high-availability definition on fly.io defined as more than 1 machine running)
-auto_start_machines = false
-min_machines_running = 1
+# starts a machine if no machines running or all over connection soft limit
+auto_start_machines = true
+min_machines_running = 0
 [http_service.http_options]
 # couldn't get this configured to work with nginx without much more debugging
 h2_backend = false
