@@ -274,23 +274,6 @@ DEFAULT_FROM_EMAIL = "Local Library Assistant <email@cshock.tech>"
 # entry point to URLConf construction
 ROOT_URLCONF = "library.urls"
 
-
-def get_template_loaders():
-    base_loaders = [
-        "django.template.loaders.filesystem.Loader",
-        "django.template.loaders.app_directories.Loader",
-    ]
-    # toggle env var if you want to edit preprod templates in real time (not needed in dev since
-    # 'runserver' cmd already invalidates template cache on template changes)
-    if (
-        ENV == "preprod"
-        and os.environ.get("DISABLE_PREPROD_NONDEBUG_TEMPLATE_CACHING", "") == "True"
-    ):
-        return base_loaders
-    else:
-        return [("django.template.loaders.cached.Loader", base_loaders)]
-
-
 TEMPLATES = [
     {
         # engine for template rendering
@@ -298,6 +281,7 @@ TEMPLATES = [
         # look in the project dir for anything app-agnostic
         "DIRS": [BASE_DIR / "templates"],
         # do not set APP_DIRS when providing OPTIONS.loaders
+        "APP_DIRS": True,
         "OPTIONS": {
             "context_processors": [
                 "django.template.context_processors.debug",
@@ -305,7 +289,6 @@ TEMPLATES = [
                 "django.contrib.auth.context_processors.auth",
                 "django.contrib.messages.context_processors.messages",
             ],
-            "loaders": get_template_loaders(),
         },
     },
 ]
@@ -368,16 +351,16 @@ if USE_REDIS_CACHE:
 def static_files_storage():
     if USING_WHITENOISE:
         return "whitenoise.storage.CompressedManifestStaticFilesStorage"
-    
+
     storage: str
     if ENV == "dev":
         storage = "django.contrib.staticfiles.storage.StaticFilesStorage"
-    # can't use hash-only on debug because debug-toolbar doesn't properly use static template tag
+    # can't use hash-only on debug because debug-toolbar doesn't properly use static template tags
     elif ENV == "preprod" and DEBUG:
         # this avoids having to configure some annoying cache headers with nginx
-        storage = "core.storage.HashOnDebugManifestStaticFilesStorage"
+        storage = "core.storage.UseHashUrlManifestStaticFilesStorage"
     else:
-        return "core.storage.HashOnlyManifestStaticFilesStorage"
+        return "core.storage.KeepHashOnlyManifestStaticFilesStorage"
     return storage
 
 

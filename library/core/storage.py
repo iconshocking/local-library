@@ -7,14 +7,14 @@ from uuid import uuid4
 from django.contrib.staticfiles.storage import ManifestStaticFilesStorage as Base
 from django.core.files.storage import Storage
 
-
-class HashOnDebugManifestStaticFilesStorage(Base):
+# forces hashed filenames to be used for statics even if in debug mode
+class UseHashUrlManifestStaticFilesStorage(Base):
     @override
     def url(self, name: str, force: bool = False) -> str:
         return super().url(name, force=not name.startswith("debug_toolbar"))  # type: ignore
 
 
-class HashOnlyManifestStaticFilesStorage(Base):
+class KeepHashOnlyManifestStaticFilesStorage(Base):
     # remove the original file after creating cache-busting hashed version
     def post_process(self, *args, **kwargs):
         process = super().post_process(*args, **kwargs)
