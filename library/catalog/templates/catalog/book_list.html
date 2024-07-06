@@ -27,9 +27,11 @@
           {% if book.cover_image and book.cover_image.url %}
             <div class="cover-image">
               <img src="{{ book.cover_image.url }}"
+                   alt="cover image"
                    alt="cover_image"
                    height="{{ book.cover_image_height }}"
-                   width="{{ book.cover_image_width }}">
+                   width="{{ book.cover_image_width }}"
+                   onerror="this.classList.add('error')">
             </div>
           {% endif %}
         </li>
