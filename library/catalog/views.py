@@ -39,7 +39,7 @@ def index(request):
 
 class BookListView(generic.ListView):
     model = Book
-    paginate_by = 10
+    paginate_by = 5
     context_object_name = "book_list"
 
 
