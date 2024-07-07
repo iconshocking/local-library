@@ -1,6 +1,12 @@
 {% extends "core/base.html" %}
 {% block content %}
-  <h1>Borrowed books</h1>
+  <h1>
+    {% if show_renew_option %}
+      All Borrowed
+    {% else %}
+      My Borrowed
+    {% endif %}
+  </h1>
   {% if show_search %}
     <form action="{% url "catalog:all_borrowed" %}"
           method="get"
@@ -32,8 +38,7 @@
               </p>
               {% comment %} removing renew option for now {% endcomment %}
               {% comment %} {% if perms.catalog.change_bookinstance and show_renew_option %}
-                <a class="btn btn-primary"
-                   href="{% url 'catalog:renew_book_librarian' bookinst.id %}">Renew</a>
+                <a class="btn btn-primary" href="{% url 'catalog:renew_book_librarian' bookinst.id %}">Renew</a>
               {% endif %} {% endcomment %}
               {% if not show_renew_option %}
                 {% comment %} we are on our own borrowed page, so allow returning {% endcomment %}
