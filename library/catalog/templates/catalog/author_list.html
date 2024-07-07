@@ -2,35 +2,46 @@
 {% block title %}
   Local Library Authors
 {% endblock title %}
+{% block head_extra %}
+  {% load static %}
+  <link rel="stylesheet" href="{% static "catalog/css/gen/author_list.css" %}">
+{% endblock head_extra %}
 {% block content %}
   <h1>Author List</h1>
+  {% if perms.catalog.add_author %}
+    <a href="{% url "catalog:author_create" %}" class="btn btn-primary mb-3">Add new author</a>
+  {% endif %}
   {% if author_list %}
     <ul>
       {% for author in author_list %}
         <li>
-          <a href="{{ author.get_absolute_url }}">{{ author.last_name }},{{ author.first_name }}</a>
-          ( Born: {{ author.date_of_birth }}
-          {% if author.date_of_death %}- Deceased: {{ author.date_of_death }}{% endif %}
-          )
-          {% if perms.catalog.change_author %}
-            <a href="{% url "catalog:author_update" author.pk %}">
-              <button>Update</button>
-            </a>
-          {% endif %}
-          {% if perms.catalog.delete_author %}
-            <a href="{% url "catalog:author_delete" author.pk %}">
-              <button>Delete</button>
-            </a>
-          {% endif %}
+          <div class="card mb-3">
+            <div class="card-body">
+              <h5 class="card-title">
+                <a href="{{ author.get_absolute_url }}">{{ author.last_name }}, {{ author.first_name }}</a>
+              </h5>
+              <p class="card-text">
+                {{ author.date_of_birth }} -
+                {% if author.date_of_death %}
+                  {{ author.date_of_death }}
+                {% else %}
+                  present
+                {% endif %}
+              </p>
+              {% if perms.catalog.change_author %}
+                <a href="{% url "catalog:author_update" author.pk %}"
+                   class="btn btn-secondary">Update</a>
+              {% endif %}
+              {% if perms.catalog.delete_author %}
+                <a href="{% url "catalog:author_delete" author.pk %}"
+                   class="btn btn-danger">Delete</a>
+              {% endif %}
+            </div>
+          </div>
         </li>
       {% endfor %}
     </ul>
   {% else %}
     <p>There are no authors in the library.</p>
-  {% endif %}
-  {% if perms.catalog.add_author %}
-    <a href="{% url "catalog:author_create" %}">
-      <button>Create</button>
-    </a>
   {% endif %}
 {% endblock content %}
