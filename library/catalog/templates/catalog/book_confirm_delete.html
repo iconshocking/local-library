@@ -6,10 +6,11 @@
   <h1>Delete Book: {{ book }}</h1>
   {% if book.bookinstance_set.all %}
     <p>You can't delete this book until all their book copies have been deleted:</p>
+    <p class="text-secondary card p-2">Note: book copies can only can be deleted from admin currently.</p>
     <ul>
       {% for instance in book.bookinstance_set.all %}
         <li>
-          <a href="./">{{ instance }} BUT NOT IMPLEMENTED YET</a>
+          <a href="./">{{ instance }}</a>
         </li>
       {% endfor %}
     </ul>
