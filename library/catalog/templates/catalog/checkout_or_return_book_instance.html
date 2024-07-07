@@ -1,0 +1,8 @@
+{% comment %} not seen unless error occurred since otherwise will redirect to success url {% endcomment %}
+{% extends "core/base.html" %}
+{% block title %}
+  Update Checkout
+{% endblock title %}
+{% block content %}
+  {% if form.errors %}<p class="text-danger">There was an error performing your request.</p>{% endif %}
+{% endblock content %}

@@ -34,6 +34,18 @@
                 <a class="btn btn-primary"
                    href="{% url 'catalog:renew_book_librarian' bookinst.id %}">Renew</a>
               {% endif %}
+              {% if not show_renew_option %}
+                {% comment %} we are on our own borrowed page, so allow returning {% endcomment %}
+                <form action="{% url "catalog:checkout_or_return_book_instance" bookinst.pk %}"
+                      method="post"
+                      class="mb-3">
+                  {% csrf_token %}
+                  <input type="text" name="borrower" hidden>
+                  <input type="text" name="due_back" hidden>
+                  <input type="text" name="status" value="a" hidden>
+                  <button type="submit" class="btn btn-primary">Return</button>
+                </form>
+              {% endif %}
             </div>
           </div>
         </li>

@@ -30,6 +30,12 @@ class RenewBookModelForm(forms.ModelForm):
         }
         widgets = {"due_back": forms.widgets.Input(attrs={"type": "date"})}
 
+# form is not meant for visual; just easy way to update the book instance
+class BorrowOrReturnBookInstanceModelForm(forms.ModelForm):
+    class Meta:
+        model = BookInstance
+        fields = ["borrower", "due_back", "status"]
+
 
 class BookForm(CrispyForm):
     class Meta:

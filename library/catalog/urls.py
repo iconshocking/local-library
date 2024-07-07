@@ -18,6 +18,11 @@ urlpatterns = [
         name="renew_book_librarian",
     ),
     path(
+        "update-checkout/<uuid:pk>/",
+        views.CheckoutOrReturnBookInstanceView.as_view(),
+        name="checkout_or_return_book_instance",
+    ),
+    path(
         "book/<int:pk>/update/",
         views.BookUpdate.as_view(),
         name="book_update",

@@ -11,7 +11,7 @@ from django.utils.decorators import method_decorator
 from django.views import generic
 from django.views.generic import CreateView, DeleteView, UpdateView
 
-from .forms import BookForm, RenewBookModelForm
+from .forms import BookForm, BorrowOrReturnBookInstanceModelForm, RenewBookModelForm
 from .models import Author, Book, BookInstance
 
 
@@ -86,7 +86,7 @@ class LoanedBooksByUserListView(LoginRequiredMixin, generic.ListView):
 
     model = BookInstance
     context_object_name = "books_list"
-    template_name = "catalog/loaned_books.html"
+    template_name = "catalog/borrowed_books.html"
     paginate_by = 10
 
     def get_queryset(self):
@@ -104,7 +104,7 @@ class AllLoanedBooksListView(PermissionRequiredMixin, generic.ListView):
     permission_required = "catalog.can_mark_returned"
     model = BookInstance
     context_object_name = "books_list"
-    template_name = "catalog/loaned_books.html"
+    template_name = "catalog/borrowed_books.html"
     paginate_by = 10
 
     def get_queryset(self):
@@ -130,6 +130,14 @@ class RenewBookLibrarianModelView(PermissionRequiredMixin, UpdateView):
     template_name = "catalog/renew_book_librarian.html"
     permission_required = "catalog.can_mark_returned"
     success_url = reverse_lazy("catalog:all_borrowed")
+
+
+class CheckoutOrReturnBookInstanceView(UpdateView):
+    model = BookInstance
+    context_object_name = "book_instance"
+    form_class = BorrowOrReturnBookInstanceModelForm
+    template_name = "catalog/checkout_or_return_book_instance.html"
+    success_url = reverse_lazy("catalog:my_borrowed")
 
 
 class AuthorCreate(PermissionRequiredMixin, CreateView):
