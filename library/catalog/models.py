@@ -140,7 +140,6 @@ class BookInstance(ExportModelOperationsMixin("bookinstance"), auto_prefetch.Mod
 
     class Meta(auto_prefetch.Model.Meta):
         ordering = ["due_back"]
-        permissions = (("can_mark_returned", "Set book as returned"),)
 
 
 class Author(ExportModelOperationsMixin("author"), models.Model):

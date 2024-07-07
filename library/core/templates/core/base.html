@@ -64,7 +64,7 @@
                   {% url 'catalog:authors' as path %}
                   {% include "core/nav_link.html" with path=path text="All authors" %}
                   {% if user.is_authenticated %}
-                    {% if perms.catalog.can_mark_returned %}
+                    {% if perms.catalog.change_bookinstance %}
                       {% url 'catalog:all_borrowed' as path %}
                       {% include "core/nav_link.html" with path=path text="All borrowed" %}
                     {% endif %}

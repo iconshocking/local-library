@@ -30,7 +30,7 @@
               <p class="card-text">
                 <a href="{% url 'catalog:book_detail' bookinst.book.pk %}">{{ bookinst.book.title }}</a>
               </p>
-              {% if perms.catalog.can_mark_returned and show_renew_option %}
+              {% if perms.catalog.change_bookinstance and show_renew_option %}
                 <a class="btn btn-primary"
                    href="{% url 'catalog:renew_book_librarian' bookinst.id %}">Renew</a>
               {% endif %}

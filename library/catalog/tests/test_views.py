@@ -178,7 +178,7 @@ class RenewBookInstancesViewTest(TestUserTestCase):
         super().setUp()
 
         # Give test_user2 permission to renew books.
-        permission = Permission.objects.get(codename="can_mark_returned")
+        permission = Permission.objects.get(codename="change_bookinstance")
         self.test_user2.user_permissions.add(permission)
         self.test_user2.save()
 

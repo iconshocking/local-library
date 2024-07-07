@@ -108,10 +108,10 @@ class LoanedBooksByUserListView(LoginRequiredMixin, generic.ListView):
 
 
 class AllLoanedBooksListView(PermissionRequiredMixin, generic.ListView):
-    """All loaned books. Accessible only to users with the 'catalog.can_mark_returned'
+    """All loaned books. Accessible only to users with the 'catalog.change_bookinstance'
     permission."""
 
-    permission_required = "catalog.can_mark_returned"
+    permission_required = "catalog.change_bookinstance"
     model = BookInstance
     context_object_name = "books_list"
     template_name = "catalog/borrowed_books.html"
@@ -138,7 +138,7 @@ class RenewBookLibrarianModelView(PermissionRequiredMixin, UpdateView):
     context_object_name = "book_instance"
     form_class = RenewBookModelForm
     template_name = "catalog/renew_book_librarian.html"
-    permission_required = "catalog.can_mark_returned"
+    permission_required = "catalog.change_bookinstance"
     success_url = reverse_lazy("catalog:all_borrowed")
 
 
