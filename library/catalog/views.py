@@ -124,6 +124,8 @@ class AllLoanedBooksListView(PermissionRequiredMixin, generic.ListView):
 
 
 class RenewBookLibrarianModelView(PermissionRequiredMixin, UpdateView):
+    model = BookInstance
+    context_object_name = "book_instance"
     form_class = RenewBookModelForm
     template_name = "catalog/renew_book_librarian.html"
     permission_required = "catalog.can_mark_returned"
