@@ -21,7 +21,7 @@
               <p class="card-text">
                 <strong>Due:</strong> {{ bookinst.due_back }}
               </p>
-              {% comment %} showing renew action means we are in ALL borrowed view, so user is not implied {% endcomment %}
+              {% comment %} showing renew action means we are in ALL borrowed view, so we need to list the user {% endcomment %}
               {% if show_renew_option %}
                 <p class="card-text">
                   <strong>Borrower:</strong> {{ bookinst.borrower.username }}
@@ -30,10 +30,11 @@
               <p class="card-text">
                 <a href="{% url 'catalog:book_detail' bookinst.book.pk %}">{{ bookinst.book.title }}</a>
               </p>
-              {% if perms.catalog.change_bookinstance and show_renew_option %}
+              {% comment %} removing renew option for now {% endcomment %}
+              {% comment %} {% if perms.catalog.change_bookinstance and show_renew_option %}
                 <a class="btn btn-primary"
                    href="{% url 'catalog:renew_book_librarian' bookinst.id %}">Renew</a>
-              {% endif %}
+              {% endif %} {% endcomment %}
               {% if not show_renew_option %}
                 {% comment %} we are on our own borrowed page, so allow returning {% endcomment %}
                 <form action="{% url "catalog:checkout_or_return_book_instance" bookinst.pk %}"
