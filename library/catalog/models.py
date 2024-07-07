@@ -111,7 +111,6 @@ class BookInstance(ExportModelOperationsMixin("bookinstance"), auto_prefetch.Mod
         help_text="Unique ID for this particular book across whole library",
     )
     book = auto_prefetch.ForeignKey(Book, on_delete=models.RESTRICT, null=True)
-    imprint = models.CharField(max_length=200)
     due_back = models.DateField(null=True, blank=True)
 
     class LOAN_STATUS(models.TextChoices):
