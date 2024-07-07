@@ -33,4 +33,7 @@ $bs-breakpoint-lg: 992px;
   --bs-card-bg: var(--primary-color);
 
   overflow: hidden;
+
+  // okay to override for specific pages
+  max-width: 500px;
 }
