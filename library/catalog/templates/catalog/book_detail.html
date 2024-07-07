@@ -40,6 +40,18 @@
                 <p class="card-text">
                   <strong>Copy ID:</strong> {{ copy.id }}
                 </p>
+                {% if copy.status == "a" %}
+                  {% comment %} show checkout action {% endcomment %}
+                  <form action="{% url "catalog:checkout_or_return_book_instance" copy.pk %}"
+                        method="post"
+                        class="mb-3">
+                    {% csrf_token %}
+                    <input type="text" name="borrower" value="{{ user.pk }}" hidden>
+                    <input type="date" name="due_back" value="{{ checkout_due_date }}" hidden>
+                    <input type="text" name="status" value="o" hidden>
+                    <button type="submit" class="btn btn-primary">Borrow</button>
+                  </form>
+                {% endif %}
               </div>
             </div>
           </li>

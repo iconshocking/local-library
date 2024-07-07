@@ -1,3 +1,4 @@
+import datetime
 from typing import Any, override
 
 from allauth.account.decorators import verified_email_required
@@ -67,6 +68,15 @@ class BookDetailView(generic.DetailView):
 
     model = Book
     context_object_name = "book"
+
+    @override
+    def get_context_data(self, **kwargs: Any) -> dict[str, Any]:
+        context = super().get_context_data(**kwargs)
+        # for hidden due_date field in form for borrowing book
+        context["checkout_due_date"] = (
+            datetime.date.today() + datetime.timedelta(weeks=3)
+        ).isoformat()
+        return context
 
 
 class AuthorListView(generic.ListView):
