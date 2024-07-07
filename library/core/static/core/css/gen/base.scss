@@ -46,3 +46,8 @@ ul {
   list-style: none;
   padding: 0;
 }
+
+.accessibility-hidden {
+  position: absolute;
+  left: -99999px;
+}

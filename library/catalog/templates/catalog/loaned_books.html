@@ -4,23 +4,38 @@
   {% if show_search %}
     <form action="{% url "catalog:all_borrowed" %}"
           method="get"
-          autocomplete="off">
-      <label for="search">Search:</label>
-      <input type="search" name="search" placeholder="filter by title">
-      <button type="submit">Search</button>
+          autocomplete="off"
+          class="mb-3 position-relative">
+      <label for="search" class="accessibility-hidden">Search:</label>
+      <input type="search" name="search" placeholder="Search by title">
+      <button type="submit" class="btn btn-primary ms-1">Search</button>
     </form>
   {% endif %}
   {% if books_list %}
     <ul>
       {% for bookinst in books_list %}
-        <li class="{% if bookinst.is_overdue %}text-danger{% endif %}">
-          {% if bookinst.is_overdue %}
-            OVERDUE
-            {% if perms.catalog.can_mark_returned and show_renew_option %}
-              - <a style="border: 1px solid black" href="{% url 'catalog:renew_book_librarian' bookinst.id %}">Renew</a>
-            {% endif %}
-          {% endif %}
-          <a href="{% url 'catalog:book_detail' bookinst.book.pk %}">{{ bookinst.book.title }}</a> ({{ bookinst.due_back }})
+        <li>
+          <div class="card mb-3">
+            <div class="card-body">
+              {% if bookinst.is_overdue %}<h5 class="card-title text-danger">OVERDUE</h5>{% endif %}
+              <p class="card-text">
+                <strong>Due:</strong> {{ bookinst.due_back }}
+              </p>
+              {% comment %} showing renew action means we are in ALL borrowed view, so user is not implied {% endcomment %}
+              {% if show_renew_option %}
+                <p class="card-text">
+                  <strong>Borrower:</strong> {{ bookinst.borrower.username }}
+                </p>
+              {% endif %}
+              <p class="card-text">
+                <a href="{% url 'catalog:book_detail' bookinst.book.pk %}">{{ bookinst.book.title }}</a>
+              </p>
+              {% if perms.catalog.can_mark_returned and show_renew_option %}
+                <a class="btn btn-primary"
+                   href="{% url 'catalog:renew_book_librarian' bookinst.id %}">Renew</a>
+              {% endif %}
+            </div>
+          </div>
         </li>
       {% endfor %}
     </ul>
