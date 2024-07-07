@@ -1,4 +1,7 @@
 {% extends "core/base.html" %}
+{% block title %}
+  Book Delete
+{% endblock title %}
 {% block content %}
   <h1>Delete Book: {{ book }}</h1>
   {% if book.bookinstance_set.all %}
