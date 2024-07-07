@@ -1,40 +1,48 @@
 {% extends "core/base.html" %}
 {% block content %}
-  <h1>Name: {{ author.last_name }}, {{ author.first_name }}</h1>
-  <div style="margin-left:20px;margin-top:20px">
+  <h1>Author: {{ author.last_name }}, {{ author.first_name }}</h1>
+  <p>
+    {{ author.date_of_birth }} -
+    {% if author.date_of_death %}
+      {{ author.date_of_death }}
+    {% else %}
+      present
+    {% endif %}
+  </p>
+  <div>
     {% if perms.catalog.change_author %}
-      <a href="{% url "catalog:author_update" author.pk %}">
-        <button>Update</button>
-      </a>
+      <a href="{% url "catalog:author_update" author.pk %}"
+         class="btn btn-secondary">Update</a>
     {% endif %}
     {% if perms.catalog.delete_author %}
-      <a href="{% url "catalog:author_delete" author.pk %}">
-        <button>Delete</button>
-      </a>
+      <a href="{% url "catalog:author_delete" author.pk %}"
+         class="btn btn-danger">Delete</a>
     {% endif %}
-    <h4>Books</h4>
+    <h4 class="mt-3">Books</h4>
     {% comment %} this queries the related model set from the parent model {% endcomment %}
-    {% for book in author.book_set.all %}
-      <hr />
-      <p>
-        <strong>Title:</strong> {{ book.title }}
-      </p>
-      <p>
-        <strong>Summary:</strong> {{ book.summary }}
-      </p>
-      <p>
-        <strong>Genre:</strong>
-        {% for genre in book.genre.all %}
-          {% if not forloop.last %}
-            {{ genre.name }},
-          {% else %}
-            {{ genre.name }}
-          {% endif %}
-        {% endfor %}
-      </p>
-      <p class="text-muted">
-        <strong>Id:</strong> {{ book.isbn }}
-      </p>
-    {% endfor %}
+    <ul>
+      {% for book in author.book_set.all %}
+        <li>
+          <div class="card mb-3">
+            <div class="card-body">
+              <h5 class="card-title">
+                <a href="{{ book.get_absolute_url }}">{{ book.title }}</a>
+              </h5>
+              <p class="card-text">
+                <strong>Genres:</strong>
+                {% for genre in book.genre.all %}
+                  {% if not forloop.last %}
+                    {{ genre.name }},
+                  {% else %}
+                    {{ genre.name }}
+                  {% endif %}
+                {% endfor %}
+              </p>
+              <p class="card-text text-body-secondary">ISBN: {{ book.isbn }}</p>
+            </div>
+          </div>
+        </li>
+      {% endfor %}
+    </ul>
   </div>
 {% endblock content %}
