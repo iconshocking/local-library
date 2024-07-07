@@ -149,20 +149,20 @@ class CheckoutOrReturnBookInstanceView(UpdateView):
     template_name = "catalog/checkout_or_return_book_instance.html"
     success_url = reverse_lazy("catalog:my_borrowed")
 
-
+@method_decorator(verified_email_required, name="dispatch")
 class AuthorCreate(PermissionRequiredMixin, CreateView):
     model = Author
     fields = ["first_name", "last_name", "date_of_birth", "date_of_death"]
     initial = {"date_of_death": "11/11/2023"}
     permission_required = "catalog.add_author"
 
-
+@method_decorator(verified_email_required, name="dispatch")
 class AuthorUpdate(PermissionRequiredMixin, UpdateView):
     model = Author
     fields = "__all__"
     permission_required = "catalog.change_author"
 
-
+@method_decorator(verified_email_required, name="dispatch")
 class AuthorDelete(PermissionRequiredMixin, DeleteView):
     model = Author
     # success_url required for DeleteView
@@ -195,7 +195,7 @@ class BookCreate(PermissionRequiredMixin, CreateView):
         form.helper.form_action = reverse("catalog:book_create")
         return form
 
-
+@method_decorator(verified_email_required, name="dispatch")
 class BookUpdate(PermissionRequiredMixin, UpdateView):
     model = Book
     permission_required = "catalog.change_book"
@@ -209,7 +209,7 @@ class BookUpdate(PermissionRequiredMixin, UpdateView):
         )
         return form
 
-
+@method_decorator(verified_email_required, name="dispatch")
 class BookDelete(PermissionRequiredMixin, DeleteView):
     model = Book
     success_url = reverse_lazy("catalog:books")
