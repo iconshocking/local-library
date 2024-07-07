@@ -8,41 +8,48 @@
 {% endblock head_extra %}
 {% block content %}
   <h1>Book List</h1>
+  {% if perms.catalog.add_book %}
+    <a href="{% url "catalog:book_create" %}" class="btn btn-primary mb-3">Add new book</a>
+  {% endif %}
   {% if book_list %}
     <ul>
       {% for book in book_list %}
         <li>
-          <a href="{{ book.get_absolute_url }}">{{ book.title }}</a>
-          ({{ book.author }})
-          {% if perms.catalog.change_book %}
-            <a href="{% url "catalog:book_update" book.pk %}">
-              <button>Update</button>
-            </a>
-          {% endif %}
-          {% if perms.catalog.delete_book %}
-            <a href="{% url "catalog:book_delete" book.pk %}">
-              <button>Delete</button>
-            </a>
-          {% endif %}
-          {% if book.cover_image and book.cover_image.url %}
-            <div class="cover-image">
-              <img src="{{ book.cover_image.url }}"
-                   alt="cover image"
-                   loading="lazy"
-                   height="{{ book.cover_image_height }}"
-                   width="{{ book.cover_image_width }}"
-                   onerror="this.classList.add('error')">
+          <div class="card mb-3">
+            <div class="row g-0">
+              {% if book.cover_image and book.cover_image.url %}
+                <div class="col-3">
+                  <div class="cover-image img-fluid">
+                    <img src="{{ book.cover_image.url }}"
+                         alt="cover image"
+                         loading="lazy"
+                         height="{{ book.cover_image_height }}"
+                         width="{{ book.cover_image_width }}"
+                         onerror="this.classList.add('error')">
+                  </div>
+                </div>
+              {% endif %}
+              <div class="col">
+                <div class="card-body">
+                  <h5 class="card-title">
+                    <a href="{{ book.get_absolute_url }}">{{ book.title }}</a>
+                  </h5>
+                  <p class="card-text">Author: {{ book.author }}</p>
+                  {% if perms.catalog.change_book %}
+                    <a href="{% url "catalog:book_update" book.pk %}"
+                       class="btn btn-secondary">Update</a>
+                  {% endif %}
+                  {% if perms.catalog.delete_book %}
+                    <a href="{% url "catalog:book_delete" book.pk %}" class="btn btn-danger">Delete</a>
+                  {% endif %}
+                </div>
+              </div>
             </div>
-          {% endif %}
+          </div>
         </li>
       {% endfor %}
     </ul>
   {% else %}
     <p>There are no books in the library.</p>
-  {% endif %}
-  {% if perms.catalog.add_book %}
-    <a href="{% url "catalog:book_create" %}">
-      <button>Create</button>
-    </a>
   {% endif %}
 {% endblock content %}

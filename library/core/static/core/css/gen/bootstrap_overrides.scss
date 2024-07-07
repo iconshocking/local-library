@@ -28,3 +28,9 @@ $bs-breakpoint-lg: 992px;
     }
   }
 }
+
+.card {
+  --bs-card-bg: var(--primary-color);
+
+  overflow: hidden;
+}

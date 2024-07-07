@@ -1,6 +1,5 @@
 .cover-image {
-  max-width: 40vw;
-  width: 200px;
+  height: 100%;
 
   img {
     // set background color before loading (will also show while loading in some browsers)
@@ -12,9 +11,15 @@
     // avoid alt text being visible on load; 'onerror' in the HTML will set the color back via
     // 'error' class
     color: transparent;
+    height: 100%;
+    object-fit: contain;
 
     &.error {
       color: var(--text-color);
     }
   }
+}
+
+.card {
+  max-width: 500px;
 }
