@@ -123,7 +123,7 @@ class BookInstance(ExportModelOperationsMixin("bookinstance"), auto_prefetch.Mod
         max_length=1,
         choices=LOAN_STATUS,  # type: ignore
         blank=True,
-        default=LOAN_STATUS.Maintenance[0],
+        default=LOAN_STATUS.Available[0],
         help_text="Book availability",
     )
 

@@ -36,6 +36,10 @@ class BorrowOrReturnBookInstanceModelForm(forms.ModelForm):
         model = BookInstance
         fields = ["borrower", "due_back", "status"]
 
+class CreateBookInstanceModelForm(forms.ModelForm):
+    class Meta:
+        model = BookInstance
+        fields = ["book"]
 
 class BookForm(CrispyForm):
     class Meta:

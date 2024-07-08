@@ -58,5 +58,12 @@
         {% endfor %}
       </ul>
     {% endif %}
+    <form action="{% url "catalog:bookinstance_create" %}"
+          method="post"
+          class="mb-3">
+      {% csrf_token %}
+      <input type="text" name="book" value="{{ book.pk }}" hidden>
+      <button type="submit" class="btn btn-primary">Create new copy</button>
+    </form>
   </div>
 {% endblock content %}

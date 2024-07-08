@@ -12,7 +12,12 @@ from django.utils.decorators import method_decorator
 from django.views import generic
 from django.views.generic import CreateView, DeleteView, UpdateView
 
-from .forms import BookForm, BorrowOrReturnBookInstanceModelForm, RenewBookModelForm
+from .forms import (
+    BookForm,
+    BorrowOrReturnBookInstanceModelForm,
+    CreateBookInstanceModelForm,
+    RenewBookModelForm,
+)
 from .models import Author, Book, BookInstance
 
 
@@ -149,6 +154,7 @@ class CheckoutOrReturnBookInstanceView(UpdateView):
     template_name = "catalog/checkout_or_return_book_instance.html"
     success_url = reverse_lazy("catalog:my_borrowed")
 
+
 @method_decorator(verified_email_required, name="dispatch")
 class AuthorCreate(PermissionRequiredMixin, CreateView):
     model = Author
@@ -156,11 +162,13 @@ class AuthorCreate(PermissionRequiredMixin, CreateView):
     initial = {"date_of_death": "11/11/2023"}
     permission_required = "catalog.add_author"
 
+
 @method_decorator(verified_email_required, name="dispatch")
 class AuthorUpdate(PermissionRequiredMixin, UpdateView):
     model = Author
     fields = "__all__"
     permission_required = "catalog.change_author"
+
 
 @method_decorator(verified_email_required, name="dispatch")
 class AuthorDelete(PermissionRequiredMixin, DeleteView):
@@ -195,6 +203,7 @@ class BookCreate(PermissionRequiredMixin, CreateView):
         form.helper.form_action = reverse("catalog:book_create")
         return form
 
+
 @method_decorator(verified_email_required, name="dispatch")
 class BookUpdate(PermissionRequiredMixin, UpdateView):
     model = Book
@@ -208,6 +217,7 @@ class BookUpdate(PermissionRequiredMixin, UpdateView):
             "catalog:book_update", args=[str(form.instance.pk)]
         )
         return form
+
 
 @method_decorator(verified_email_required, name="dispatch")
 class BookDelete(PermissionRequiredMixin, DeleteView):
@@ -224,3 +234,13 @@ class BookDelete(PermissionRequiredMixin, DeleteView):
             return HttpResponseRedirect(
                 reverse("catalog:book_delete", kwargs={"pk": object.pk})
             )
+
+
+class BookInstanceCreateView(CreateView):
+    model = BookInstance
+    context_object_name = "book_instance"
+    form_class = CreateBookInstanceModelForm
+    template_name = "catalog/bookinstance_create.html"
+
+    def get_success_url(self) -> str:
+        return reverse("catalog:book_detail", kwargs={"pk": self.request.POST["book"]})

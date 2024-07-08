@@ -38,6 +38,11 @@ urlpatterns = [
         name="book_create",
     ),
     path(
+        "bookinstance/create/",
+        views.BookInstanceCreateView.as_view(),
+        name="bookinstance_create",
+    ),
+    path(
         "author/<int:pk>/update/",
         views.AuthorUpdate.as_view(),
         name="author_update",
