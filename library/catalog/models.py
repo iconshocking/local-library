@@ -1,4 +1,6 @@
 import datetime
+import random
+import string
 import uuid
 from typing import override
 
@@ -62,6 +64,7 @@ class Book(ExportModelOperationsMixin("book"), auto_prefetch.Model):
         # 'help_text' supports HTML
         help_text='13 Character <a href="https://www.isbn-international.org/content/what-isbn'
         '">ISBN number</a>',
+        default=lambda: "".join(random.choices(string.digits, k=13)),
     )
 
     genre = models.ManyToManyField(Genre, help_text="Select a genre for this book")

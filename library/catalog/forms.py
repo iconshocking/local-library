@@ -51,7 +51,6 @@ class BookForm(CrispyForm):
             "title",
             "author",
             "summary",
-            "isbn",
             "genre",
             "language",
             "cover_image",
