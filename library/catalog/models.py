@@ -46,6 +46,10 @@ class Genre(ExportModelOperationsMixin("genre"), models.Model):
         ]
 
 
+def generate_isbn() -> str:
+    return "".join(random.choices(string.digits, k=13))
+
+
 # auto-prefetching optimizes many-to-one/many relationship queries where if a field in a related
 # model is accessed, it performs a prefretch_related() call equivalent
 class Book(ExportModelOperationsMixin("book"), auto_prefetch.Model):
@@ -57,6 +61,7 @@ class Book(ExportModelOperationsMixin("book"), auto_prefetch.Model):
     summary = models.TextField(
         max_length=1000, help_text="Enter a brief description of the book"
     )
+
     isbn = models.CharField(
         "ISBN",  # verbose name
         max_length=13,
@@ -64,7 +69,7 @@ class Book(ExportModelOperationsMixin("book"), auto_prefetch.Model):
         # 'help_text' supports HTML
         help_text='13 Character <a href="https://www.isbn-international.org/content/what-isbn'
         '">ISBN number</a>',
-        default=lambda: "".join(random.choices(string.digits, k=13)),
+        default=generate_isbn,
     )
 
     genre = models.ManyToManyField(Genre, help_text="Select a genre for this book")
