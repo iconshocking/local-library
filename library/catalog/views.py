@@ -4,6 +4,7 @@ from typing import Any, override
 from allauth.account.decorators import verified_email_required
 from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
 from django.db.models.base import Model as Model
+from django.db.models.query import QuerySet
 from django.forms import BaseModelForm
 from django.http import HttpResponseRedirect
 from django.shortcuts import render
@@ -188,7 +189,7 @@ class AuthorDelete(PermissionRequiredMixin, DeleteView):
             )
 
 
-# put a verification requirement here since creating new books allows for uploading cover images
+# always put a verification requirement here since creating new books allows for uploading cover images
 # that aren't deleting a previous cover image (like the update page does), which is an attack vector
 # to balloon object storage
 @method_decorator(verified_email_required, name="dispatch")
@@ -244,3 +245,17 @@ class BookInstanceCreateView(CreateView):
 
     def get_success_url(self) -> str:
         return reverse("catalog:book_detail", kwargs={"pk": self.request.POST["book"]})
+
+
+@method_decorator(verified_email_required, name="dispatch")
+class BookInstanceDeleteView(DeleteView):
+    model = BookInstance
+    template_name = "catalog/bookinstance_delete.html"
+
+    def get_object(self, queryset: QuerySet[Any] | None = None) -> BookInstance:
+        self.object: BookInstance = super().get_object(queryset)  # type: ignore
+        self.book = self.object.book.pk if self.object.book else None
+        return self.object
+
+    def get_success_url(self) -> str:
+        return reverse("catalog:book_delete", kwargs={"pk": self.book})
