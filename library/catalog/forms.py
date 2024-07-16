@@ -4,7 +4,7 @@ from core.forms import CrispyForm
 from django import forms
 from django.utils.translation import gettext_lazy as _
 
-from .models import Book, BookInstance
+from .models import Author, Book, BookInstance
 
 
 class RenewBookModelForm(forms.ModelForm):
@@ -30,16 +30,19 @@ class RenewBookModelForm(forms.ModelForm):
         }
         widgets = {"due_back": forms.widgets.Input(attrs={"type": "date"})}
 
+
 # form is not meant for visual; just easy way to update the book instance
 class BorrowOrReturnBookInstanceModelForm(forms.ModelForm):
     class Meta:
         model = BookInstance
         fields = ["borrower", "due_back", "status"]
 
+
 class CreateBookInstanceModelForm(forms.ModelForm):
     class Meta:
         model = BookInstance
         fields = ["book"]
+
 
 class BookForm(CrispyForm):
     class Meta:
@@ -53,3 +56,9 @@ class BookForm(CrispyForm):
             "language",
             "cover_image",
         ]
+
+
+class AuthorForm(CrispyForm):
+    class Meta:
+        model = Author
+        fields = ["first_name", "last_name", "date_of_birth", "date_of_death"]

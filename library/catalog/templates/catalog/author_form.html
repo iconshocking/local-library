@@ -3,9 +3,6 @@
   Author Update
 {% endblock title %}
 {% block content %}
-  <form action="" method="post">
-    {% csrf_token %}
-    {{ form }}
-    <button>Submit</button>
-  </form>
+{% load crispy_forms_tags %}
+{% crispy form %}
 {% endblock content %}

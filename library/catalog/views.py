@@ -14,6 +14,7 @@ from django.views import generic
 from django.views.generic import CreateView, DeleteView, UpdateView
 
 from .forms import (
+    AuthorForm,
     BookForm,
     BorrowOrReturnBookInstanceModelForm,
     CreateBookInstanceModelForm,
@@ -159,16 +160,30 @@ class CheckoutOrReturnBookInstanceView(UpdateView):
 @method_decorator(verified_email_required, name="dispatch")
 class AuthorCreate(PermissionRequiredMixin, CreateView):
     model = Author
-    fields = ["first_name", "last_name", "date_of_birth", "date_of_death"]
-    initial = {"date_of_death": "11/11/2023"}
+    initial = {"date_of_death": "01/01/2024"}
     permission_required = "catalog.add_author"
+    form_class = AuthorForm
+
+    @override
+    def get_form(self, form_class: type[BaseModelForm] | None = None) -> BaseModelForm:
+        form: AuthorForm = super().get_form(form_class)  # type: ignore
+        form.helper.form_action = reverse("catalog:author_create")
+        return form
 
 
 @method_decorator(verified_email_required, name="dispatch")
 class AuthorUpdate(PermissionRequiredMixin, UpdateView):
     model = Author
-    fields = "__all__"
     permission_required = "catalog.change_author"
+    form_class = AuthorForm
+
+    @override
+    def get_form(self, form_class: type[BaseModelForm] | None = None) -> BaseModelForm:
+        form: AuthorForm = super().get_form(form_class)  # type: ignore
+        form.helper.form_action = reverse(
+            "catalog:author_update", args=[str(form.instance.pk)]
+        )
+        return form
 
 
 @method_decorator(verified_email_required, name="dispatch")
