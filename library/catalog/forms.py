@@ -61,3 +61,7 @@ class AuthorForm(CrispyForm):
     class Meta:
         model = Author
         fields = ["first_name", "last_name", "date_of_birth", "date_of_death"]
+        widgets = {
+            "date_of_birth": forms.widgets.Input(attrs={"type": "date"}),
+            "date_of_death": forms.widgets.Input(attrs={"type": "date"}),
+        }

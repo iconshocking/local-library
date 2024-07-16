@@ -160,7 +160,6 @@ class CheckoutOrReturnBookInstanceView(UpdateView):
 @method_decorator(verified_email_required, name="dispatch")
 class AuthorCreate(PermissionRequiredMixin, CreateView):
     model = Author
-    initial = {"date_of_death": "01/01/2024"}
     permission_required = "catalog.add_author"
     form_class = AuthorForm
 
