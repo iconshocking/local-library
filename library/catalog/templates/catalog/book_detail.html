@@ -40,7 +40,7 @@
                 <p class="card-text">
                   <strong>Copy ID:</strong> {{ copy.id }}
                 </p>
-                {% if copy.status == "a" %}
+                {% if copy.status == "a" and user.is_authenticated %}
                   {% comment %} show checkout action {% endcomment %}
                   <form action="{% url "catalog:checkout_or_return_book_instance" copy.pk %}"
                         method="post"
@@ -58,12 +58,16 @@
         {% endfor %}
       </ul>
     {% endif %}
-    <form action="{% url "catalog:bookinstance_create" %}"
-          method="post"
-          class="mb-3">
-      {% csrf_token %}
-      <input type="text" name="book" value="{{ book.pk }}" hidden>
-      <button type="submit" class="btn btn-primary">Create new copy</button>
-    </form>
+    {% if user.is_authenticated %}
+      <form action="{% url "catalog:bookinstance_create" %}"
+            method="post"
+            class="mb-3">
+        {% csrf_token %}
+        <input type="text" name="book" value="{{ book.pk }}" hidden>
+        <button type="submit" class="btn btn-primary">Create new copy</button>
+      </form>
+    {% else %}
+      <a href="{% url "account_login" %}">Sign in if you want to borrow or create a new copy.</a>
+    {% endif %}
   </div>
 {% endblock content %}
