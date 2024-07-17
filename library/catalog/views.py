@@ -88,7 +88,7 @@ class BookDetailView(generic.DetailView):
 
 class AuthorListView(generic.ListView):
     model = Author
-    paginate_by = 2
+    paginate_by = 5
     context_object_name = "author_list"
     queryset = Author.objects.all()
 
