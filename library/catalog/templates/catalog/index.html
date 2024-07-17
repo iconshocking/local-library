@@ -4,8 +4,20 @@
 {% endblock title %}
 {% block content %}
   <h1>Library Home</h1>
-  <p>Welcome to an example local library! (<a href="https://github.com/iconshocking/local-library">source code here</a>)</p>
+  <p>
+    Welcome to an example local library! (<a href="https://github.com/iconshocking/local-library">source code here</a>)
+  </p>
   <p>Use the navigation menu to get around!</p>
+  {% url "account_login" as login_url %}
+  {% url "admin:index" as admin_index %}
+  <form action="{{ login_url|add:"?next="|add:admin_index }}" method="post">
+    {% csrf_token %}
+    <input type="hidden" name="login" value="admin-viewonly">
+    <input type="hidden" name="password" value="adminexample">
+    <button type="submit" class="btn btn-link d-inline p-0 mb-3">
+      Click here for view-only access to the admin site.
+    </button>
+  </form>
   <p>A few stats for you:</p>
   <ul>
     <li>

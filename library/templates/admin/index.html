@@ -1,5 +1,5 @@
 {% extends "admin/index.html" %}
 {% block content %}
-  <p>✨ Put your customizations here ✨</p>
+  {% if user.get_username == "admin-viewonly" %}This is view-only admin access.{% endif %}
   {{ block.super }}
 {% endblock content %}
