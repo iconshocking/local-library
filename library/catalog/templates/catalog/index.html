@@ -8,14 +8,16 @@
     Welcome to an example local library! (<a href="https://github.com/iconshocking/local-library">source code here</a>)
   </p>
   <p>Use the navigation menu to get around!</p>
+  <p><a href="{% url "account_signup" %}">Sign up</a> to borrow and create books as well as authors!
+  </p>
   {% url "account_login" as login_url %}
   {% url "admin:index" as admin_index %}
-  <form action="{{ login_url|add:"?next="|add:admin_index }}" method="post">
+  <form action="{{ login_url|add:"?next="|add:admin_index }}" method="post" class="mw-100 w-100">
     {% csrf_token %}
     <input type="hidden" name="login" value="admin-viewonly">
     <input type="hidden" name="password" value="adminexample">
-    <button type="submit" class="btn btn-link d-inline p-0 mb-3">
-      Click here for view-only access to the admin site.
+    <button type="submit" class="btn btn-link d-inline p-0 mb-3 text-start">
+      Click here for view-only access to the admin site (must be signed out first).
     </button>
   </form>
   <p>A few stats for you:</p>
