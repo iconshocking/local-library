@@ -54,6 +54,6 @@ class BookInstanceAdmin(admin.ModelAdmin):
         "due_back",
     )
     fieldsets = (
-        (None, {"fields": ("book", "imprint", "id")}),
+        (None, {"fields": ("book", "id")}),
         ("Availability", {"fields": ("status", "due_back", "borrower")}),
     )

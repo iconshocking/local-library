@@ -110,7 +110,6 @@ class LoanedBookInstancesByUserListViewTest(TestUserTestCase):
             the_borrower = self.test_user1 if book_copy % 2 else self.test_user2
             BookInstance.objects.create(
                 book=self.test_book,
-                imprint="Unlikely Imprint, 2016",
                 due_back=return_date,
                 borrower=the_borrower,
                 status=BookInstance.LOAN_STATUS.Maintenance,
@@ -185,7 +184,6 @@ class RenewBookInstancesViewTest(TestUserTestCase):
         def makeBook(borrower):
             return BookInstance.objects.create(
                 book=self.test_book,
-                imprint="Unlikely Imprint, 2016",
                 due_back=datetime.date.today() + datetime.timedelta(days=5),
                 borrower=self.test_user1,
                 status=BookInstance.LOAN_STATUS.OnLoan,
