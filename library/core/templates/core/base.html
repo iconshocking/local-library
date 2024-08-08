@@ -30,65 +30,65 @@
     {% comment %} don't need to preload since the font URL is in the inlined CSS instead of a
     separate CSS download, but adding it as good practice if that changes {% endcomment %}
     <link rel="preload" as="font" type="font/ttf" href="{% static "core/fonts/Libre_Franklin/LibreFranklin-VariableFont_wght.ttf" %}" crossorigin>
-    <style>{% include "core/css/inlined/fonts.css" %}</style>
+    <style>{% include "core/css/inlined/fonts.css" %}
+      {% include "core/css/inlined/books_background.css" %}
+    </style>
     <link rel="preload" href="{% static "core/js/base_page.js" %}" as="script">
     {% block head_extra %}
     {% endblock head_extra %}
   </head>
-  <body>
-    <div class="full-container">
-      <div>
-        {% block navbar %}
-          <nav class="navbar navbar-expand-lg bg-body-tertiary">
-            <div class="container-fluid align-items-baseline">
-              <div>
-                <p class="navbar-brand" href="#">Local Library</p>
-                {% if user.get_username %}<p class="navbar-brand-sub">User: {{ user.get_username }}</p>{% endif %}
-              </div>
-              <button class="navbar-toggler collapsed"
-                      id="navbar-toggler"
-                      type="button"
-                      data-bs-toggle="collapse"
-                      data-bs-target="#navbar-toggler-target"
-                      aria-controls="#navbar-toggler-target"
-                      aria-expanded="false"
-                      aria-label="Toggle navigation">
-                <span class="navbar-toggler-icon"></span>
-              </button>
-              <div class="collapse navbar-collapse" id="navbar-toggler-target">
-                <ul class="navbar-nav me-auto mb-2 mt-2 mb-lg-0 mt-lg-0">
-                  {% url 'catalog:index' as path %}
-                  {% include "core/nav_link.html" with path=path text="Home" %}
-                  {% url 'catalog:books' as path %}
-                  {% include "core/nav_link.html" with path=path text="All books" %}
-                  {% url 'catalog:authors' as path %}
-                  {% include "core/nav_link.html" with path=path text="All authors" %}
-                  {% if user.is_authenticated %}
-                    {% if perms.catalog.change_bookinstance %}
-                      {% url 'catalog:all_borrowed' as path %}
-                      {% include "core/nav_link.html" with path=path text="All borrowed" %}
-                    {% endif %}
-                    {% url 'catalog:my_borrowed' as path %}
-                    {% include "core/nav_link.html" with path=path text="My borrowed" %}
-                    {% url 'account_logout' as path %}
-                    {% include "core/nav_link.html" with path=path text="Sign out" %}
-                  {% else %}
-                    {% url 'account_login' as path %}
-                    {% comment %} providing 'next' parameter is the default way of setting/retrieving
-                    a redirect URL when using RedirectURLMixin {% endcomment %}
-                    {% comment %} turn off djlint to prevent query string breaking with auto-formatted new line {% endcomment %}
-                    <!-- djlint:off -->{% include "core/nav_link.html" with path=path query="?next="|add:request.path text="Sign in" %}<!-- djlint:on -->
-                  {% endif %}
-                </ul>
-              </div>
-            </div>
-          </nav>
-          {% comment %} script here ensures navbar expand/collapse is laid out before lower HTML to
-          avoid layout shift {% endcomment %}
-          <script src="{% static "core/js/base_page.js" %}"></script>
-        {% endblock navbar %}
-      </div>
-      <main>
+  <body class="d-flex flex-column">
+    {% block navbar %}
+      <nav class="navbar navbar-expand-lg bg-body-secondary px-4">
+        <div class="container-fluid align-items-baseline p-0">
+          <div>
+            <p class="navbar-brand" href="#">Local Library</p>
+            {% if user.get_username %}<p class="navbar-brand-sub">User: {{ user.get_username }}</p>{% endif %}
+          </div>
+          <button class="navbar-toggler collapsed"
+                  id="navbar-toggler"
+                  type="button"
+                  data-bs-toggle="collapse"
+                  data-bs-target="#navbar-toggler-target"
+                  aria-controls="#navbar-toggler-target"
+                  aria-expanded="false"
+                  aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+          </button>
+          <div class="collapse navbar-collapse" id="navbar-toggler-target">
+            <ul class="navbar-nav me-auto mb-2 mt-2 mb-lg-0 mt-lg-0">
+              {% url 'catalog:index' as path %}
+              {% include "core/nav_link.html" with path=path text="Home" %}
+              {% url 'catalog:books' as path %}
+              {% include "core/nav_link.html" with path=path text="All books" %}
+              {% url 'catalog:authors' as path %}
+              {% include "core/nav_link.html" with path=path text="All authors" %}
+              {% if user.is_authenticated %}
+                {% if perms.catalog.change_bookinstance %}
+                  {% url 'catalog:all_borrowed' as path %}
+                  {% include "core/nav_link.html" with path=path text="All borrowed" %}
+                {% endif %}
+                {% url 'catalog:my_borrowed' as path %}
+                {% include "core/nav_link.html" with path=path text="My borrowed" %}
+                {% url 'account_logout' as path %}
+                {% include "core/nav_link.html" with path=path text="Sign out" %}
+              {% else %}
+                {% url 'account_login' as path %}
+                {% comment %} providing 'next' parameter is the default way of setting/retrieving
+                a redirect URL when using RedirectURLMixin {% endcomment %}
+                {% comment %} turn off djlint to prevent query string breaking with auto-formatted new line {% endcomment %}
+                <!-- djlint:off -->{% include "core/nav_link.html" with path=path query="?next="|add:request.path text="Sign in" %}<!-- djlint:on -->
+              {% endif %}
+            </ul>
+          </div>
+        </div>
+      </nav>
+      {% comment %} script here ensures navbar expand/collapse is laid out before lower HTML to
+      avoid layout shift {% endcomment %}
+      <script src="{% static "core/js/base_page.js" %}"></script>
+    {% endblock navbar %}
+    <main class="books-background flex-grow-1">
+      <div class="books-background py-3 px-4">
         {% block content %}
         {% endblock content %}
         {% block pagination %}
@@ -122,9 +122,18 @@
             </nav>
           {% endif %}
         {% endblock pagination %}
-      </main>
-      {% block extra_body %}
-      {% endblock extra_body %}
-    </div>
+      </div>
+    </main>
+    {% block body_extra %}
+    {% endblock body_extra %}
+    <footer class="bg-body-secondary px-4 pt-3">
+      <small>
+        <p>
+          This is a practice project by <a target="_blank" href="https://me.cshock.tech">Conrad Shock</a> for practicing Django development.
+          <br>
+          Background iconography and images from <a target="_blank" href="https://icons8.com/">Icons8</a>.
+        </p>
+      </small>
+    </footer>
   </body>
 </html>

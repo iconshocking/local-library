@@ -1,0 +1,13 @@
+{% load static %}
+
+.books-background {
+  background: url("{% static 'core/images/bookshelf.png' %}") top right no-repeat round, rgb(134, 199, 131);
+  background-attachment: fixed;
+}
+
+/* bs-breakpoint-md */
+@media (max-width: 720px) {
+  .books-background {
+    background: rgb(134, 199, 131);
+  }
+}

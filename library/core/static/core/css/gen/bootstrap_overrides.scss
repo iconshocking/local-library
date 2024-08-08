@@ -1,8 +1,10 @@
-// matches bootstrap --bs-breakpoint-lg
-$bs-breakpoint-lg: 992px;
+@import "_vars.scss";
 
-.navbar {
-  margin: 0 -0.5rem 1rem;
+:root {
+  --bg-color: #faf9b9;
+  --bg-secondary-color: #e7fdab;
+  --bg-tertiary-color: #e7fdab;
+  --bs-body-bg: #70a070;
 }
 
 .navbar-brand {
@@ -30,10 +32,34 @@ $bs-breakpoint-lg: 992px;
 }
 
 .card {
-  --bs-card-bg: var(--primary-color);
+  --bs-card-bg: var(--bg-secondary-color);
 
   overflow: hidden;
 
   // okay to override for specific pages
   max-width: 500px;
+}
+
+.bg-body {
+  background-color: var(--bg-color) !important;
+
+  &-transparent {
+    background-color: transparent !important;
+  }
+}
+
+.bg-body-secondary {
+  background-color: var(--bg-secondary-color) !important;
+}
+
+.pagination {
+  margin-bottom: 0;
+}
+
+.btn-link {
+  font-weight: 500;
+}
+
+.page-link {
+  --bs-pagination-bg: var(--bg-secondary-color);
 }

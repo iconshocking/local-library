@@ -3,7 +3,7 @@
 
   img {
     // set background color before loading (will also show while loading in some browsers)
-    background-color: var(--secondary-color);
+    background-color: var(--bg-tertiary-color);
 
     // must set as block/inline-block to preserve space if image load errors
     display: inline-block;

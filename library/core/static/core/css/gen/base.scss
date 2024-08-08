@@ -1,22 +1,19 @@
+@import "_vars.scss";
+
 :root {
-  --background-color: #fff2d7;
-  --primary-color: #ffe0b5;
-  --secondary-color: #f8c794;
-  --tertiary-color: #d8ae7e;
   --text-color: black;
 }
 
 body {
-  background: var(--background-color);
+  min-height: 100vh;
   color: var(--text-color);
   font-family: libre-franklin, sans-serif;
   font-weight: 400;
-  padding: 1rem 2rem;
 }
 
 h1,
 h2 {
-  font-weight: 300;
+  font-weight: 700;
   font-stretch: 75%;
   letter-spacing: -0.02em;
 }
@@ -50,4 +47,8 @@ ul {
 .accessibility-hidden {
   position: absolute;
   left: -99999px;
+}
+
+a {
+  font-weight: 400;
 }
