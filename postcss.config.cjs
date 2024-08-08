@@ -3,11 +3,11 @@ module.exports = {
   // not be transpiled to CSS comments
   parser: "postcss-scss",
   plugins: {
-    "postcss-preset-env": {},
     stylelint: {},
-    "postcss-nesting": {},
-    autoprefixer: {},
     "postcss-import": {},
+    "postcss-nested": {}, // put early to avoid issues
+    "postcss-preset-env": {},
+    autoprefixer: {},
     "postcss-advanced-variables": {},
   },
 };
