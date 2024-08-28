@@ -44,6 +44,7 @@ django-auto-prefetch = "^1.8.0"
 django-browser-reload = "^1.12.1"
 django-extensions = "^3.2.3"
 django-allauth = "^0.63.3"
+urllib3 = "2.2.2"
 
 [build-system]
 requires = ["poetry-core"]
