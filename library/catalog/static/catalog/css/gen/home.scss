@@ -1,7 +1,7 @@
 @import "../../../../../core/static/core/css/gen/_vars.scss";
 
 .fadein {
-  animation: fadein-left 1.25s 0.25s 1 normal both running;
+  animation: 1.25s 0.25s 1 normal both running fadein-left;
   width: fit-content;
 }
 
