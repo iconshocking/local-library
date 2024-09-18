@@ -1,19 +1,18 @@
+const NAV_MENU_COOKIE_NAME = "nav_menu_state";
+const NAV_MENU_COOKIE_OPEN = "open";
+const NAV_MENU_COOKIE_CLOSED = "closed";
+
 const toggler = document.body.querySelector("#navbar-toggler");
 const expander = document.body.querySelector("#navbar-toggler-target");
 
 toggler?.addEventListener("click", () => {
-  sessionStorage.setItem(
-    "navbarExpanded",
-    // expanding if the height is 0
-    // @ts-ignore
-    expander?.offsetHeight === 0 ? "true" : "false"
-  );
+  // expanding if the height is 0
+  // @ts-ignore
+  const open = expander?.offsetHeight === 0;
+  sessionStorage.setItem("navbarExpanded", open.toString());
+
+  const cookie = `${NAV_MENU_COOKIE_NAME}=${
+    open ? NAV_MENU_COOKIE_OPEN : NAV_MENU_COOKIE_CLOSED
+  }; path=/`;
+  document.cookie = cookie;
 });
-
-// default is collapsed, so we need to set some bootstrap classes if it was expanded last
-if (sessionStorage.getItem("navbarExpanded") === "true") {
-  expander?.classList.add("show");
-
-  toggler?.classList.remove("collapsed");
-  toggler?.setAttribute("aria-expanded", "true");
-}

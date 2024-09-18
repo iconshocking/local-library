@@ -33,13 +33,13 @@
     <style>{% include "core/css/inlined/fonts.css" %}
       {% include "core/css/inlined/books_background.css" %}
     </style>
-    <link rel="preload" href="{% static "core/js/base_page.js" %}" as="script">
+    <script defer src="{% static "core/js/base_page.js" %}"></script>
     {% block head_extra %}
     {% endblock head_extra %}
   </head>
   {% comment %} set books-background on body to avoid color flash since main isn't rendered by the
   time of the blocking nav menu script {% endcomment %}
-  <body class="d-flex flex-column books-background">
+  <body class="d-flex flex-column books-background h-full">
     {% block navbar %}
       <nav class="navbar navbar-expand-lg bg-body-secondary px-4">
         <div class="container-fluid align-items-baseline p-0">
@@ -47,17 +47,18 @@
             <p class="navbar-brand" href="#">Local Library</p>
             {% if user.get_username %}<p class="navbar-brand-sub">User: {{ user.get_username }}</p>{% endif %}
           </div>
-          <button class="navbar-toggler collapsed"
+          <button class="navbar-toggler {% if not nav_menu_open %}collapsed{% endif %}"
                   id="navbar-toggler"
                   type="button"
                   data-bs-toggle="collapse"
                   data-bs-target="#navbar-toggler-target"
                   aria-controls="#navbar-toggler-target"
-                  aria-expanded="false"
+                  aria-expanded="{% if nav_menu_open %}true{% else %}false{% endif %}"
                   aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
           </button>
-          <div class="collapse navbar-collapse" id="navbar-toggler-target">
+          <div class="collapse navbar-collapse {% if nav_menu_open %}show{% endif %}"
+               id="navbar-toggler-target">
             <ul class="navbar-nav me-auto mb-2 mt-2 mb-lg-0 mt-lg-0">
               {% url 'catalog:index' as path %}
               {% include "core/nav_link.html" with path=path text="Home" %}
@@ -85,9 +86,6 @@
           </div>
         </div>
       </nav>
-      {% comment %} script here ensures navbar expand/collapse is laid out before lower HTML to
-      avoid layout shift {% endcomment %}
-      <script src="{% static "core/js/base_page.js" %}"></script>
     {% endblock navbar %}
     <main class="flex-grow-1">
       <div class="py-3 px-4">

@@ -241,7 +241,7 @@ ACCOUNT_SIGNUP_PASSWORD_ENTER_TWICE = True  # default
 ACCOUNT_SIGNUP_FORM_CLASS = None  # default
 # honeypot fields are hidden visually and via tab navigation, but are often accidentally filled in
 # by bots, and an account won't be made if the field is filled out
-ACCOUNT_SIGNUP_FORM_HONEYPOT_FIELD = None # not using for now since requires some styling to make hidden when used with crispyforms
+ACCOUNT_SIGNUP_FORM_HONEYPOT_FIELD = None  # not using for now since requires some styling to make hidden when used with crispyforms
 # only works if the flow doesn't require side steps like email verification
 ACCOUNT_SIGNUP_REDIRECT_URL = LOGIN_REDIRECT_URL  # default
 # be careful disabling this
@@ -288,6 +288,7 @@ TEMPLATES = [
                 "django.template.context_processors.request",
                 "django.contrib.auth.context_processors.auth",
                 "django.contrib.messages.context_processors.messages",
+                "catalog.context_processors.nav_menu_state",
             ],
         },
     },
