@@ -15,9 +15,6 @@ services:
       # relative to the context
       dockerfile: ../container-config/Dockerfile_nginx
       target: prod
-    # share statics & user media with django volume for convenience for development
-    volumes:
-      - user-media:/user-media
     ports:
       - 80:80
     env_file:

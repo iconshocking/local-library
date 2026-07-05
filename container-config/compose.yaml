@@ -35,8 +35,6 @@ services:
     env_file:
       - ./git-safe/.dev.safe.env
       - ./secrets/.dev.env
-    volumes:
-      - user-media:/app/library/user-media
     # tells Docker Compose to start the database before your application
     depends_on:
       postgres:
@@ -89,4 +87,3 @@ services:
 
 volumes:
   postgres-data:
-  user-media:

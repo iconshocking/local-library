@@ -18,6 +18,9 @@ services:
       - ./git-safe/.preprod.safe.env
     ports:
       - 81:81
+    volumes:
+      # share statics & user media with django volume for convenience for development
+      - user-media:/user-media
     develop:
       watch:
         - path: ../nginx/statics
@@ -39,3 +42,6 @@ services:
       - ./secrets/.preprod.env
     ports:
       - 9090:9090
+
+volumes:
+  user-media:
