@@ -2,13 +2,19 @@ services:
   django:
     build:
       target: base
+    user: root
     # command works differently in docker-compose than in Dockerfile, so have to pass command
-    command: sh -c "python manage.py migrate --noinput && python manage.py runserver 0.0.0.0:$DJANGO_PORT --nostatic"
+    command: sh -c "python manage.py migrate --noinput && sh dev_startup.sh && python manage.py runserver 0.0.0.0:$DJANGO_PORT --nostatic"
     ports:
       - 127.0.0.1:$DJANGO_PORT:$DJANGO_PORT
     env_file:
       - ./secrets/.dev.env
+    volumes:
+      - user-media:/app/library/user-media
 
   redis:
     env_file:
       - ./secrets/.dev.env
+
+volumes:
+  user-media:
